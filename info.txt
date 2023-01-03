@@ -1,2 +1,0 @@
-git: https://github.com/tonduong2128/SCHEDULE_API
-excel: https://1drv.ms/x/s!Aq9zS9Vp6PMkcagO1h0K5o4jE54?e=5QhpYV

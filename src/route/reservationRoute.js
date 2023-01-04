@@ -6,6 +6,7 @@ ReservationRouter.get("/:id", ReservationController.getById)
 ReservationRouter.get("/", ReservationController.search)
 ReservationRouter.post("/", ReservationController.create)
 ReservationRouter.patch("/", ReservationController.update)
+ReservationRouter.patch("/many", ReservationController.updateMany)
 ReservationRouter.delete("/", ReservationController.delete)
 
 export default ReservationRouter

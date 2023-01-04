@@ -28,6 +28,28 @@ const AuthController = {
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
         }
     },
+    async reset(req, res, next) {
+        try {
+            const { token } = req.locals
+            const { newpassword } = req.body
+            const user = jwt.decode(token, process.env.SECRET_KEY);
+            const userdb = await User.findOne({
+                where: {
+                    id: user.id || 0
+                }
+            })
+            if (!user) {
+                throw new Error("Authen faild in reset password");
+            }
+            await userdb.update({
+                password: newpassword,
+            })
+            res.json(response(res, RESPONSE_CODE.SUCCESS, []))
+        } catch (error) {
+            console.log(error);
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+        }
+    }
 }
 
 export default AuthController

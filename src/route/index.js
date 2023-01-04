@@ -6,7 +6,7 @@ import auth from "../middleware/auth.js"
 const route = (app) => {
     app.use("/auth", AuthRoute)
     app.use("/user", auth, UserRoute)
-    app.use("/reservetion", auth, ReservationRoute)
+    app.use("/reservation", auth, ReservationRoute)
 }
 
 export default route

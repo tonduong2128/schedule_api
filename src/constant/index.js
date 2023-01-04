@@ -15,5 +15,15 @@ const ROLE = {
     teacher_vip: 4,
 }
 
+const STATUS_USER = {
+    using: 1,
+    exprid: 2,
+}
 
-export { RESPONSE_CODE, SALT_ROUNDS, PER_PAGE, ROLE }
+const STATUS_RESERVATION = {
+    new: 1,
+    approval: 2,
+    reject: 3,
+}
+
+export { RESPONSE_CODE, SALT_ROUNDS, PER_PAGE, ROLE, STATUS_USER, STATUS_RESERVATION }

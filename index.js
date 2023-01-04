@@ -1,7 +1,13 @@
 import express from 'express'
-import route from './src/route';
+import route from './src/route/index.js';
 import dotenv from "dotenv";
-dotenv.config();
+
+if (process.env.NODE_ENV == "production") {
+  dotenv.config({ path: ".env.production" });
+} else {
+  dotenv.config({ path: ".env.development" });
+}
+
 const app = express()
 
 app.use(express.urlencoded({ extended: false }));

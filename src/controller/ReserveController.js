@@ -1,11 +1,8 @@
 
-import { User } from "../db/model/index.js"
-const UserComtroller = {
+import { Reservation } from "../db/model/index.js"
+const ReservationController = {
     async getById(req, res, next) {
-        const user = await User.findAll({
-
-        })
-        res.json(user)
+        res.json("getById")
     },
     async search(req, res, next) {
         res.json("search")
@@ -21,4 +18,4 @@ const UserComtroller = {
     },
 }
 
-export default UserComtroller
+export default ReservationController

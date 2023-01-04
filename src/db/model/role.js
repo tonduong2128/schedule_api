@@ -1,25 +1,14 @@
-"use strict";
-import { Model } from "sequelize";
+import { DataTypes } from "sequelize";
+import sequelize from "../index.js";
 
-export default (sequelize, DataTypes) => {
-  class RolesModel extends Model {
-    static associate(models) {
-      this.belongsToMany(models.Users, {
-        through: "user_role",
-        onUpdate: "cascade",
-      });
-    }
-  }
-  RolesModel.init(
-    {
-      code: DataTypes.STRING,
-      name: DataTypes.STRING,
-      desciption: DataTypes.STRING,
-    },
-    {
-      sequelize,
-      modelName: "Role",
-    }
-  );
-  return RolesModel;
-};
+
+const Role = sequelize.define('role', {
+  code: DataTypes.STRING,
+  name: DataTypes.STRING,
+}, {
+  modelName: "Role",
+  tableName: "role",
+  timestamps: false
+});
+
+export default Role

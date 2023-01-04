@@ -1,26 +1,24 @@
-"use strict";
-import { Model } from "sequelize";
+import { DataTypes } from "sequelize";
+import sequelize from "../index.js";
 
-export default (sequelize, DataTypes) => {
-    class ReservationModel extends Model {
-        static associate(models) {
-        }
-    }
-    ReservationModel.init(
-        {
-            vehicleTypeId: DataTypes.INTEGER,
-            targetDate: DataTypes.DATE,
-            startTime: DataTypes.TIME,
-            endTime: DataTypes.TIME,
-            reason: DataTypes.STRING,
-            teacherId: DataTypes.INTEGER,
-            status: DataTypes.INTEGER,
-            createdBy: DataTypes.INTEGER,
-        },
-        {
-            sequelize,
-            modelName: "Reservation",
-        }
-    );
-    return ReservationModel;
-};
+const Reservation = sequelize.define('reservation', {
+    vehicleTypeId: DataTypes.INTEGER,
+    targetDate: DataTypes.DATE,
+    startTime: DataTypes.TIME,
+    endTime: DataTypes.TIME,
+    reason: DataTypes.STRING,
+    teacherId: DataTypes.INTEGER,
+    status: DataTypes.INTEGER,
+
+    createdBy: DataTypes.INTEGER,
+    updatedBy: DataTypes.INTEGER,
+
+    createdBy: DataTypes.DATE,
+    updatedBy: DataTypes.DATE,
+}, {
+    modelName: "Reservation",
+    tableName: "reservation",
+    timestamps: false
+});
+
+export default Reservation

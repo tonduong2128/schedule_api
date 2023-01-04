@@ -1,5 +1,11 @@
 const RESPONSE_CODE = {
-
+    ERROR: 0,
+    SUCCESS: 1,
+    ERROR_EXTERNAL: 2,
 }
+const SALT_ROUNDS = 10;
 
-export { RESPONSE_CODE }
+const PER_PAGE = 10;
+
+
+export { RESPONSE_CODE, SALT_ROUNDS, PER_PAGE }

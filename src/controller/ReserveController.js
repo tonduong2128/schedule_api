@@ -38,6 +38,7 @@ const ReservationController = {
     async search(req, res, next) {
         try {
             const { query } = req;
+            const { _user } = req.locals;
             const searchOption = JSON.parse(query.searchOption);
             const searchModel = JSON.parse(query.searchModel);
 
@@ -45,6 +46,7 @@ const ReservationController = {
             const page = searchOption.page;
             const offset = (page - 1) * limit;
             const order = []
+
             const result = await Reservation.findAndCountAll({
                 where: {
                     ...searchModel

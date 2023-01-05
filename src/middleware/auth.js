@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import { RESPONSE_CODE } from "../constant";
+import { response } from "../util";
 
 const auth = (req, res, next) => {
     try {

@@ -14,7 +14,7 @@ const UserComtroller = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -22,7 +22,7 @@ const UserComtroller = {
             res.json("search")
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
@@ -34,7 +34,7 @@ const UserComtroller = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -61,7 +61,7 @@ const UserComtroller = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -86,7 +86,7 @@ const UserComtroller = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -100,10 +100,10 @@ const UserComtroller = {
                     }
                 }
             })
-            res.json(response(req, RESPONSE_CODE.SUCCESS, []))
+            res.json(response(req, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }

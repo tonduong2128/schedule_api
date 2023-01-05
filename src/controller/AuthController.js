@@ -17,37 +17,36 @@ const AuthController = {
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {
                 const token = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
-                const newResponse = response(res, RESPONSE_CODE.SUCCESS, []);
+                const newResponse = response(res, RESPONSE_CODE.SUCCESS);
                 newResponse.token = token
                 res.json(newResponse);
             } else {
-                res.json(response(res, RESPONSE_CODE.ERROR, []))
+                res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
-    async reset(req, res, next) {
+    async resetForce(req, res, next) {
         try {
-            const { token } = req.locals
-            const { newpassword } = req.body
-            const user = jwt.decode(token, process.env.SECRET_KEY);
+            const { _user } = req.locals
+            const { user } = req.body
             const userdb = await User.findOne({
                 where: {
                     id: user.id || 0
                 }
             })
-            if (!user) {
+            if (!_user && !userdb) {
                 throw new Error("Authen faild in reset password");
             }
             await userdb.update({
-                password: newpassword,
+                password: user.password,
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS, []))
+            res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     }
 }

@@ -1,4 +1,5 @@
 
+import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
 import { Reservation } from "../db/model/index.js"
 import { response } from "../util/index.js";
@@ -13,7 +14,7 @@ const ReservationController = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -21,19 +22,54 @@ const ReservationController = {
             res.json("search")
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
         try {
+            const { _user } = req.locals;
             const { body } = req;
             const { reservation } = body;
+            const timeValid = reservation.startTime <= reservation.endTime;
+            if (!timeValid) {
+                return res.json(response(req, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+            }
+            const checkReservationExists = await Reservation.findOne({
+                where: {
+                    teacherId: reservation.teacherId,
+                    targetDate: reservation.targetDate,
+                    [Op.or]: [
+                        {
+                            startTime: {
+                                [Op.lte]: reservation.startTime
+                            },
+                            endTime: {
+                                [Op.gt]: reservation.startTime
+                            }
+                        },
+                        {
+                            startTime: {
+                                [Op.lt]: reservation.endTime
+                            },
+                            endTime: {
+                                [Op.gte]: reservation.endTime
+                            }
+                        },
+                    ]
+                }
+            })
+
+            if (!!checkReservationExists) {
+                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, records))
+            }
+
+            reservation.createdBy = _user.id;
             const reservationdb = await Reservation.create(reservation).then(r => r?.toJSON() || null);
             const records = !!reservationdb ? [reservationdb] : [];
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -55,7 +91,7 @@ const ReservationController = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -80,7 +116,7 @@ const ReservationController = {
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -94,10 +130,10 @@ const ReservationController = {
                     }
                 }
             })
-            res.json(response(req, RESPONSE_CODE.SUCCESS, []))
+            res.json(response(req, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL, []))
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }

@@ -2,6 +2,8 @@ const RESPONSE_CODE = {
     ERROR: 0,
     SUCCESS: 1,
     ERROR_EXTERNAL: 2,
+    RESERVATION_EXISTS: 3,
+    RESERVATION_TIME_NOT_VALID: 4,
 }
 const SALT_ROUNDS = 10;
 
@@ -25,5 +27,6 @@ const STATUS_RESERVATION = {
     approval: 2,
     reject: 3,
 }
+
 
 export { RESPONSE_CODE, SALT_ROUNDS, PER_PAGE, ROLE, STATUS_USER, STATUS_RESERVATION }

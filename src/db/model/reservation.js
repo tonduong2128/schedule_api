@@ -3,7 +3,7 @@ import sequelize from "../index.js";
 
 const Reservation = sequelize.define('reservation', {
     vehicleTypeId: DataTypes.INTEGER,
-    targetDate: DataTypes.DATE,
+    targetDate: DataTypes.DATEONLY,
     startTime: DataTypes.TIME,
     endTime: DataTypes.TIME,
     reason: DataTypes.STRING,
@@ -13,8 +13,8 @@ const Reservation = sequelize.define('reservation', {
     createdBy: DataTypes.INTEGER,
     updatedBy: DataTypes.INTEGER,
 
-    createdBy: DataTypes.DATE,
-    updatedBy: DataTypes.DATE,
+    createdDate: DataTypes.DATE,
+    updatedDate: DataTypes.DATE,
 }, {
     modelName: "Reservation",
     tableName: "reservation",

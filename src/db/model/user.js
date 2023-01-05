@@ -22,8 +22,8 @@ const User = sequelize.define('User', {
   createdBy: DataTypes.INTEGER,
   updatedBy: DataTypes.INTEGER,
 
-  createdBy: DataTypes.DATE,
-  updatedBy: DataTypes.DATE,
+  createdDate: DataTypes.DATE,
+  updatedDate: DataTypes.DATE,
 }, {
   modelName: "User",
   tableName: "user",

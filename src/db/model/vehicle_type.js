@@ -10,8 +10,8 @@ const VehicleType = sequelize.define('vehicle_type', {
     createdBy: DataTypes.INTEGER,
     updatedBy: DataTypes.INTEGER,
 
-    createdBy: DataTypes.DATE,
-    updatedBy: DataTypes.DATE,
+    createdDate: DataTypes.DATE,
+    updatedDate: DataTypes.DATE,
 }, {
     modelName: "VehicleType",
     tableName: "vehicle_type",

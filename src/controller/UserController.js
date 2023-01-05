@@ -1,7 +1,7 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { User } from "../db/model/index.js";
+import { Reservation, User } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
     async getById(req, res, next) {
@@ -19,7 +19,26 @@ const UserComtroller = {
     },
     async search(req, res, next) {
         try {
-            res.json("search")
+            const { query } = req;
+            const searchOption = JSON.parse(query.searchOption);
+            const searchModel = JSON.parse(query.searchModel);
+
+            const limit = searchOption.limit;
+            const page = searchOption.page;
+            const offset = (page - 1) * limit;
+            const order = []
+            const result = await Reservation.findAndCountAll({
+                where: {
+                    ...searchModel
+                },
+                limit,
+                offset,
+                order,
+            })
+            const records = result.rows;
+            const count = result.count;
+            const page_count = Math.ceil(count / limit);
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

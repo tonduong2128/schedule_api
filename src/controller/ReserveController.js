@@ -1,14 +1,32 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { Reservation } from "../db/model/index.js"
+import { Reservation, User, Vehicle_Type } from "../db/model/index.js"
 import { response } from "../util/index.js";
 const ReservationController = {
     async getById(req, res, next) {
         try {
             const { id } = req.params
             const reservationdb = await Reservation.findOne({
-                where: { id }
+                where: { id },
+                include: [
+                    {
+                        model: User,
+                        as: "CreatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "UpdatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "Teacher",
+                    },
+                    {
+                        model: Vehicle_Type,
+                        as: "VehicleType"
+                    }
+                ]
             }).then(r => r?.toJSON() || null)
             const records = !!reservationdb ? [reservationdb] : [];
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
@@ -19,7 +37,26 @@ const ReservationController = {
     },
     async search(req, res, next) {
         try {
-            res.json("search")
+            const { query } = req;
+            const searchOption = JSON.parse(query.searchOption);
+            const searchModel = JSON.parse(query.searchModel);
+
+            const limit = searchOption.limit;
+            const page = searchOption.page;
+            const offset = (page - 1) * limit;
+            const order = []
+            const result = await Reservation.findAndCountAll({
+                where: {
+                    ...searchModel
+                },
+                limit,
+                offset,
+                order,
+            })
+            const records = result.rows;
+            const count = result.count;
+            const page_count = Math.ceil(count / limit);
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

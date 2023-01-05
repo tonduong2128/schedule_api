@@ -1,7 +1,7 @@
 
 import jwt from "jsonwebtoken";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { User } from "../db/model/index.js";
+import { Role, User } from "../db/model/index.js";
 import { bcrypt, response } from "../util/index.js";
 
 const AuthController = {
@@ -12,7 +12,14 @@ const AuthController = {
             const userdb = await User.findOne({
                 where: {
                     username: user.username
-                }
+                },
+                include: [
+                    {
+                        model: Role,
+                        as: "Roles",
+                        attributes: ["code"]
+                    }
+                ]
             }).then(r => r?.toJSON() || null)
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {

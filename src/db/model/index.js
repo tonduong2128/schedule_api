@@ -4,8 +4,9 @@ import User from './user.js';
 import User_Role from './user_role.js';
 import Vehicle_Type from './vehicle_type.js';
 
-User.belongsToMany(Role, { through: 'user_role' });
-Role.belongsToMany(User, { through: 'user_role' });
+User.belongsToMany(Role, { through: 'user_role', as: "Roles" });
+Role.belongsToMany(User, { through: 'user_role', as: "User" });
+
 
 User.hasMany(Reservation, {
     foreignKey: "createdBy",

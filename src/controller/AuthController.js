@@ -1,8 +1,8 @@
 
+import jwt from "jsonwebtoken";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { User } from "../db/model/index.js"
+import { User } from "../db/model/index.js";
 import { bcrypt, response } from "../util/index.js";
-import jwt from "jsonwebtoken"
 
 const AuthController = {
     async login(req, res, next) {

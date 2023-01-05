@@ -1,7 +1,7 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { Reservation, User, Vehicle_Type } from "../db/model/index.js"
+import { Reservation, User, Vehicle_Type } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const ReservationController = {
     async getById(req, res, next) {

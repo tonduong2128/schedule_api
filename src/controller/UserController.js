@@ -1,7 +1,7 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { Reservation, User } from "../db/model/index.js";
+import { User } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
     async getById(req, res, next) {
@@ -27,7 +27,7 @@ const UserComtroller = {
             const page = searchOption.page;
             const offset = (page - 1) * limit;
             const order = []
-            const result = await Reservation.findAndCountAll({
+            const result = await User.findAndCountAll({
                 where: {
                     ...searchModel
                 },

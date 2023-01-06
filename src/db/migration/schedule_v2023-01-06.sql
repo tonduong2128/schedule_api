@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 05, 2023 at 04:40 AM
+-- Generation Time: Jan 06, 2023 at 04:53 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -35,12 +35,19 @@ CREATE TABLE `reservation` (
   `vehicleTypeId` bigint(20) NOT NULL,
   `teacherId` bigint(20) NOT NULL,
   `status` int(11) NOT NULL,
-  `reason` text NOT NULL,
+  `reason` text DEFAULT NULL,
   `createdBy` bigint(20) NOT NULL,
-  `updatedBy` bigint(20) NOT NULL,
+  `updatedBy` bigint(20) DEFAULT NULL,
   `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
   `updatedDate` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `reservation`
+--
+
+INSERT INTO `reservation` (`id`, `targetDate`, `startTime`, `endTime`, `vehicleTypeId`, `teacherId`, `status`, `reason`, `createdBy`, `updatedBy`, `createdDate`, `updatedDate`) VALUES
+(25, '2023-01-05', '10:00:00', '12:00:00', 2, 9, 1, NULL, 9, NULL, '2023-01-05 04:21:56', NULL);
 
 -- --------------------------------------------------------
 
@@ -54,20 +61,29 @@ CREATE TABLE `role` (
   `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`id`, `code`, `name`) VALUES
+(1, '1', 'admin'),
+(2, '2', 'teacher'),
+(3, '3', 'student'),
+(4, '4', 'teacher vip');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `type_vehicle`
+-- Table structure for table `student_teacher`
 --
 
-CREATE TABLE `type_vehicle` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text NOT NULL,
+CREATE TABLE `student_teacher` (
+  `studentId` bigint(11) NOT NULL,
+  `teacherId` bigint(11) NOT NULL,
   `createdBy` bigint(20) NOT NULL,
-  `updatedBy` bigint(20) NOT NULL,
+  `updatedBy` bigint(20) DEFAULT NULL,
   `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updatedDate` timestamp NULL DEFAULT NULL
+  `UpdatedDate` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -91,6 +107,13 @@ CREATE TABLE `user` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `phone`, `nickname`, `email`, `createdBy`, `updatedBy`, `createdDate`, `updatedDate`, `status`) VALUES
+(9, 'admin', '$2b$10$T1cfw8AVTEMftySZek1EteugtbdVIqjQ8tUHQ4iMl2nvBHea.qdBq', '', '', '', '', NULL, NULL, '2023-01-05 03:41:28', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -98,10 +121,44 @@ CREATE TABLE `user` (
 --
 
 CREATE TABLE `user_role` (
-  `id` bigint(20) NOT NULL,
   `roleId` bigint(20) NOT NULL,
-  `userId` bigint(20) NOT NULL
+  `userId` bigint(20) NOT NULL,
+  `createdBy` bigint(20) NOT NULL,
+  `updatedBy` bigint(20) DEFAULT NULL,
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedDate` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_role`
+--
+
+INSERT INTO `user_role` (`roleId`, `userId`, `createdBy`, `updatedBy`, `createdDate`, `updatedDate`) VALUES
+(1, 9, 9, NULL, '2023-01-06 03:47:41', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vehicle_type`
+--
+
+CREATE TABLE `vehicle_type` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `createdBy` bigint(20) NOT NULL,
+  `updatedBy` bigint(20) DEFAULT NULL,
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedDate` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `vehicle_type`
+--
+
+INSERT INTO `vehicle_type` (`id`, `name`, `description`, `createdBy`, `updatedBy`, `createdDate`, `updatedDate`) VALUES
+(2, 'Toyota', NULL, 9, NULL, '2023-01-05 04:00:25', NULL),
+(3, 'Chevrolet', NULL, 9, NULL, '2023-01-05 04:00:39', NULL);
 
 --
 -- Indexes for dumped tables
@@ -124,10 +181,12 @@ ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `type_vehicle`
+-- Indexes for table `student_teacher`
 --
-ALTER TABLE `type_vehicle`
-  ADD PRIMARY KEY (`id`),
+ALTER TABLE `student_teacher`
+  ADD PRIMARY KEY (`studentId`,`teacherId`),
+  ADD KEY `teacherId` (`teacherId`),
+  ADD KEY `studentId` (`studentId`),
   ADD KEY `createdBy` (`createdBy`,`updatedBy`),
   ADD KEY `updatedBy` (`updatedBy`);
 
@@ -144,9 +203,19 @@ ALTER TABLE `user`
 -- Indexes for table `user_role`
 --
 ALTER TABLE `user_role`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`roleId`,`userId`),
   ADD KEY `roleId` (`roleId`,`userId`),
-  ADD KEY `userId` (`userId`);
+  ADD KEY `userId` (`userId`),
+  ADD KEY `createdBy` (`createdBy`,`updatedBy`),
+  ADD KEY `updatedBy` (`updatedBy`);
+
+--
+-- Indexes for table `vehicle_type`
+--
+ALTER TABLE `vehicle_type`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `createdBy` (`createdBy`,`updatedBy`),
+  ADD KEY `updatedBy` (`updatedBy`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -156,31 +225,25 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `type_vehicle`
---
-ALTER TABLE `type_vehicle`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT for table `user_role`
+-- AUTO_INCREMENT for table `vehicle_type`
 --
-ALTER TABLE `user_role`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `vehicle_type`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -192,15 +255,17 @@ ALTER TABLE `user_role`
 ALTER TABLE `reservation`
   ADD CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`updatedBy`) REFERENCES `user` (`id`),
   ADD CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `reservation_ibfk_3` FOREIGN KEY (`vehicleTypeId`) REFERENCES `type_vehicle` (`id`),
+  ADD CONSTRAINT `reservation_ibfk_3` FOREIGN KEY (`vehicleTypeId`) REFERENCES `vehicle_type` (`id`),
   ADD CONSTRAINT `reservation_ibfk_4` FOREIGN KEY (`teacherId`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `type_vehicle`
+-- Constraints for table `student_teacher`
 --
-ALTER TABLE `type_vehicle`
-  ADD CONSTRAINT `type_vehicle_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `type_vehicle_ibfk_2` FOREIGN KEY (`updatedBy`) REFERENCES `user` (`id`);
+ALTER TABLE `student_teacher`
+  ADD CONSTRAINT `student_teacher_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `student_teacher_ibfk_2` FOREIGN KEY (`teacherId`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `student_teacher_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `student_teacher_ibfk_4` FOREIGN KEY (`updatedBy`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `user`
@@ -214,7 +279,16 @@ ALTER TABLE `user`
 --
 ALTER TABLE `user_role`
   ADD CONSTRAINT `user_role_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`);
+  ADD CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`),
+  ADD CONSTRAINT `user_role_ibfk_3` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `user_role_ibfk_4` FOREIGN KEY (`updatedBy`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `vehicle_type`
+--
+ALTER TABLE `vehicle_type`
+  ADD CONSTRAINT `vehicle_type_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `vehicle_type_ibfk_2` FOREIGN KEY (`updatedBy`) REFERENCES `user` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

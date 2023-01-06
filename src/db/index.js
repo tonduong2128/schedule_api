@@ -6,6 +6,8 @@ const sequelize = new Sequelize(
     realConfig.database,
     realConfig.username,
     realConfig.password,
-    realConfig
+    {
+        ...realConfig,
+    }
 )
 export default sequelize

@@ -3,13 +3,13 @@ import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../index.js";
 
 
-const User_Role = sequelize.define('user_role', {
-  roleId: {
+const Student_Teacher = sequelize.define('student_teacher', {
+  studentId: {
     primaryKey: true,
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  userId: {
+  teacherId: {
     primaryKey: true,
     type: DataTypes.BIGINT,
     allowNull: false,
@@ -28,9 +28,9 @@ const User_Role = sequelize.define('user_role', {
     type: DataTypes.DATE,
   },
 }, {
-  modelName: "User_Role",
-  tableName: "user_role",
-  timestamps: false
+  modelName: "Student_Teacher",
+  tableName: "student_teacher",
+  timestamps: false,
 });
 
-export default User_Role
+export default Student_Teacher

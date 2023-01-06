@@ -1,20 +1,44 @@
-import { DataTypes } from "sequelize";
+import moment from "moment/moment.js";
+import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../index.js";
 
 const Reservation = sequelize.define('reservation', {
-    vehicleTypeId: DataTypes.INTEGER,
-    targetDate: DataTypes.DATEONLY,
-    startTime: DataTypes.TIME,
-    endTime: DataTypes.TIME,
+    vehicleTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    targetDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    startTime: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    endTime: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
     reason: DataTypes.STRING,
-    teacherId: DataTypes.INTEGER,
+    teacherId: {
+        type: DataTypes.BIGINT,
+        allowNull: false
+    },
     status: DataTypes.INTEGER,
 
-    createdBy: DataTypes.INTEGER,
-    updatedBy: DataTypes.INTEGER,
+    createdBy: {
+        type: DataTypes.BIGINT,
+        allowNull: false
+    },
+    updatedBy: DataTypes.BIGINT,
 
-    createdDate: DataTypes.DATE,
-    updatedDate: DataTypes.DATE,
+    createdDate: {
+        type: DataTypes.DATE,
+        defaultValue: moment()
+    },
+    updatedDate: {
+        type: DataTypes.DATE,
+    },
 }, {
     modelName: "Reservation",
     tableName: "reservation",

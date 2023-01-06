@@ -3,8 +3,15 @@ import sequelize from "../index.js";
 
 
 const Role = sequelize.define('role', {
-  code: DataTypes.STRING,
-  name: DataTypes.STRING,
+  code: {
+    type: DataTypes.STRING,
+    primaryKey: true,
+    allowNull: false,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   modelName: "Role",
   tableName: "role",

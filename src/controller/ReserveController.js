@@ -99,7 +99,7 @@ const ReservationController = {
             })
 
             if (!!checkReservationExists) {
-                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, records))
+                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
             reservation.createdBy = _user.id;

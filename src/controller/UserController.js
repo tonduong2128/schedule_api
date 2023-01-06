@@ -46,8 +46,10 @@ const UserComtroller = {
     },
     async create(req, res, next) {
         try {
+            const { _user } = req.locals
             const { body } = req;
             const { user } = body;
+            user.createdBy = _user.id
             const userdb = await User.create(user).then(r => r?.toJSON() || null);
             const records = !!userdb ? [userdb] : [];
             res.json(response(req, RESPONSE_CODE.SUCCESS, records))
@@ -70,10 +72,7 @@ const UserComtroller = {
             })
             const userdb = await User.findOne({
                 where: {
-                    [Op.or]: [
-                        { id: user.id || 0 },
-                        { username: user.username }
-                    ],
+                    id: user.id || 0,
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!userdb ? [userdb] : [];

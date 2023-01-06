@@ -1,33 +1,55 @@
-import { DataTypes } from "sequelize";
+import moment from "moment";
+import { DataTypes, Sequelize } from "sequelize";
 import bcrypt from "../../util/bcrypt.js";
 import sequelize from "../index.js";
 
 
 const User = sequelize.define('User', {
-  username: DataTypes.STRING,
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   password: {
     type: DataTypes.STRING,
     set(value) {
       const hash = bcrypt.hash(value);
       this.setDataValue("password", hash);
     },
+    allowNull: false,
   },
-  fullname: DataTypes.STRING,
-  phone: DataTypes.STRING,
+  fullname: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   nickname: DataTypes.STRING,
   email: DataTypes.STRING,
-  status: DataTypes.INTEGER,
+
+  status: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 
 
-  createdBy: DataTypes.INTEGER,
-  updatedBy: DataTypes.INTEGER,
+  createdBy: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+  },
+  updatedBy: DataTypes.BIGINT,
 
-  createdDate: DataTypes.DATE,
-  updatedDate: DataTypes.DATE,
+  createdDate: {
+    type: DataTypes.DATE,
+    defaultValue: moment(),
+  },
+  updatedDate: {
+    type: DataTypes.DATE,
+  },
 }, {
   modelName: "User",
   tableName: "user",
   timestamps: false
 });
-
 export default User

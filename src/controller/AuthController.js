@@ -18,6 +18,14 @@ const AuthController = {
                         model: Role,
                         as: "Roles",
                         attributes: ["code"]
+                    },
+                    {
+                        model: User,
+                        as: "Teachers",
+                    },
+                    {
+                        model: User,
+                        as: "Students",
                     }
                 ]
             }).then(r => r?.toJSON() || null)

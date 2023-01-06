@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 06, 2023 at 04:53 AM
+-- Generation Time: Jan 06, 2023 at 06:00 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -83,7 +83,7 @@ CREATE TABLE `student_teacher` (
   `createdBy` bigint(20) NOT NULL,
   `updatedBy` bigint(20) DEFAULT NULL,
   `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
-  `UpdatedDate` timestamp NULL DEFAULT NULL
+  `updatedDate` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -98,8 +98,8 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `fullname` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
-  `nickname` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `nickname` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `createdBy` bigint(20) DEFAULT NULL,
   `updatedBy` bigint(20) DEFAULT NULL,
   `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -112,7 +112,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `phone`, `nickname`, `email`, `createdBy`, `updatedBy`, `createdDate`, `updatedDate`, `status`) VALUES
-(9, 'admin', '$2b$10$T1cfw8AVTEMftySZek1EteugtbdVIqjQ8tUHQ4iMl2nvBHea.qdBq', '', '', '', '', NULL, NULL, '2023-01-05 03:41:28', NULL, 0);
+(9, 'admin', '$2b$10$T1cfw8AVTEMftySZek1EteugtbdVIqjQ8tUHQ4iMl2nvBHea.qdBq', 'admin', '0987795761', 'TonDuong', '', NULL, NULL, '2023-01-05 03:41:28', NULL, 1),
+(11, 'teacher', '$2b$10$Nt0OeAhrMr5p2XwlGIIBO.7zLOhtBii0WPzewyrlCgFPsXAxi7ClC', 'Duong Tan Ton', '0987795761', NULL, NULL, 9, NULL, '2023-01-06 11:44:24', NULL, 1),
+(12, 'student', '$2b$10$VBerx8NnxZSjvVk0HbkOzetTLkbY1t5b8PPGS8OdvXm42Yor5hwBa', 'Nguyen Van Ha', '0987795761', NULL, NULL, 9, NULL, '2023-01-06 11:54:26', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -237,7 +239,7 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `vehicle_type`

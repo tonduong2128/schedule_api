@@ -1,7 +1,7 @@
 import express from 'express'
 import route from './src/route/index.js';
 import dotenv from "dotenv";
-
+import cors from 'cors'
 if (process.env.NODE_ENV == "production") {
   dotenv.config({ path: ".env.production" });
 } else {
@@ -9,7 +9,7 @@ if (process.env.NODE_ENV == "production") {
 }
 
 const app = express()
-
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 

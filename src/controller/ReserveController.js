@@ -75,6 +75,7 @@ const ReservationController = {
             }
             const checkReservationExists = await Reservation.findOne({
                 where: {
+                    id: { [Op.ne]: reservation.id },
                     teacherId: reservation.teacherId,
                     targetDate: reservation.targetDate,
                     [Op.or]: [
@@ -122,6 +123,7 @@ const ReservationController = {
             }
             const checkReservationExists = await Reservation.findOne({
                 where: {
+                    id: { [Op.ne]: reservation.id },
                     teacherId: reservation.teacherId,
                     targetDate: reservation.targetDate,
                     [Op.or]: [

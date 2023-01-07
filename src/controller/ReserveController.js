@@ -115,6 +115,38 @@ const ReservationController = {
         try {
             const { body } = req;
             const { reservation } = body;
+
+            const timeValid = reservation.startTime <= reservation.endTime;
+            if (!timeValid) {
+                return res.json(response(req, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+            }
+            const checkReservationExists = await Reservation.findOne({
+                where: {
+                    teacherId: reservation.teacherId,
+                    targetDate: reservation.targetDate,
+                    [Op.or]: [
+                        {
+                            startTime: {
+                                [Op.lte]: reservation.startTime
+                            },
+                            endTime: {
+                                [Op.gt]: reservation.startTime
+                            }
+                        },
+                        {
+                            startTime: {
+                                [Op.lt]: reservation.endTime
+                            },
+                            endTime: {
+                                [Op.gte]: reservation.endTime
+                            }
+                        },
+                    ]
+                }
+            })
+            if (!!checkReservationExists) {
+                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, []))
+            }
             const reservationIddb = await Reservation.update(reservation, {
                 where: {
                     id: reservation.id || 0

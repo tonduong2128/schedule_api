@@ -11,7 +11,8 @@ const sequelize = new Sequelize(
         operatorsAliases: {
             $in: Op.in,
             $ne: Op.ne,
-            $and: Op.and
+            $and: Op.and,
+            $between: Op.between
         }
     }
 )

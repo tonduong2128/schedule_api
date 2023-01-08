@@ -46,7 +46,7 @@ const VehicleTypeController = {
     },
     async create(req, res, next) {
         try {
-            const { _user } = req.locals
+            const { _user } = res.locals
             const { body } = req;
             const { vehicleType } = body;
             vehicleType.createdBy = _user.id

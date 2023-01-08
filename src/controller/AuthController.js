@@ -45,7 +45,7 @@ const AuthController = {
     },
     async resetForce(req, res, next) {
         try {
-            const { _user } = req.locals
+            const { _user } = res.locals
             const { user } = req.body
             const userdb = await User.findOne({
                 where: {

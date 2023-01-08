@@ -22,11 +22,11 @@ const UserComtroller = {
             const { query } = req;
             const searchOption = JSON.parse(query.searchOption);
             const searchModel = JSON.parse(query.searchModel);
-
             const limit = searchOption.limit;
             const page = searchOption.page;
             const offset = (page - 1) * limit;
             const order = []
+
             const result = await User.findAndCountAll({
                 where: {
                     ...searchModel
@@ -46,7 +46,7 @@ const UserComtroller = {
     },
     async create(req, res, next) {
         try {
-            const { _user } = req.locals
+            const { _user } = res.locals
             const { body } = req;
             const { user } = body;
             user.createdBy = _user.id

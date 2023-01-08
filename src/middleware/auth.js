@@ -17,6 +17,10 @@ const auth = async (req, res, next) => {
                     model: Role,
                     as: "Roles",
                     attributes: ["code"]
+                },
+                {
+                    model: User,
+                    as: "Teachers",
                 }
             ]
         }).then(r => r?.toJSON() || null)
@@ -25,9 +29,9 @@ const auth = async (req, res, next) => {
         //     return res.json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
         // }
         const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
-        req.locals = {}
-        req.locals._user = userdb;
-        req.locals.token = newToken;
+        res.locals = {}
+        res.locals._user = userdb;
+        res.locals.token = newToken;
         next()
     } catch (error) {
         console.log(error);

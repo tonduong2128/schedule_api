@@ -38,7 +38,7 @@ const ReservationController = {
     async search(req, res, next) {
         try {
             const { query } = req;
-            const { _user } = req.locals;
+            const { _user } = res.locals;
             const searchOption = JSON.parse(query.searchOption);
             const searchModel = JSON.parse(query.searchModel);
 
@@ -55,6 +55,12 @@ const ReservationController = {
                         [Op.between]: targetDate
                     }
                 },
+                include: [
+                    {
+                        model: User,
+                        as: "CreatedBy"
+                    }
+                ],
                 limit,
                 offset,
                 order,
@@ -70,7 +76,7 @@ const ReservationController = {
     },
     async create(req, res, next) {
         try {
-            const { _user } = req.locals;
+            const { _user } = res.locals;
             const { body } = req;
             const { reservation } = body;
             const timeValid = reservation.startTime <= reservation.endTime;
@@ -97,6 +103,14 @@ const ReservationController = {
                             },
                             endTime: {
                                 [Op.gte]: reservation.endTime
+                            }
+                        },
+                        {
+                            startTime: {
+                                [Op.gte]: reservation.startTime
+                            },
+                            endTime: {
+                                [Op.lte]: reservation.endTime
                             }
                         },
                     ]
@@ -145,6 +159,14 @@ const ReservationController = {
                             },
                             endTime: {
                                 [Op.gte]: reservation.endTime
+                            }
+                        },
+                        {
+                            startTime: {
+                                [Op.gte]: reservation.startTime
+                            },
+                            endTime: {
+                                [Op.lte]: reservation.endTime
                             }
                         },
                     ]

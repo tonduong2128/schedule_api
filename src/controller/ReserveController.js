@@ -42,6 +42,8 @@ const ReservationController = {
             const searchOption = JSON.parse(query.searchOption);
             const searchModel = JSON.parse(query.searchModel);
 
+            const { targetDate } = searchModel;
+
             const limit = searchOption.limit;
             const page = searchOption.page;
             const offset = (page - 1) * limit;
@@ -49,7 +51,9 @@ const ReservationController = {
 
             const result = await Reservation.findAndCountAll({
                 where: {
-                    ...searchModel
+                    targetDate: {
+                        [Op.between]: targetDate
+                    }
                 },
                 limit,
                 offset,

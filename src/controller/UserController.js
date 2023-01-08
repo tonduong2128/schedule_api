@@ -11,7 +11,7 @@ const UserComtroller = {
                 where: { id }
             }).then(r => r?.toJSON() || null)
             const records = !!userdb ? [userdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -52,7 +52,7 @@ const UserComtroller = {
             user.createdBy = _user.id
             const userdb = await User.create(user).then(r => r?.toJSON() || null);
             const records = !!userdb ? [userdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -76,7 +76,7 @@ const UserComtroller = {
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!userdb ? [userdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -101,7 +101,7 @@ const UserComtroller = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!usersdb && usersdb.length > 0 ? [usersdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -118,7 +118,7 @@ const UserComtroller = {
                     }
                 }
             })
-            res.json(response(req, RESPONSE_CODE.SUCCESS))
+            res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

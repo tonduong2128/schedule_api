@@ -11,7 +11,7 @@ const VehicleTypeController = {
                 where: { id }
             }).then(r => r?.toJSON() || null)
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -52,7 +52,7 @@ const VehicleTypeController = {
             vehicleType.createdBy = _user.id
             const vehicleTypedb = await Vehicle_Type.create(vehicleType).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -75,7 +75,7 @@ const VehicleTypeController = {
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -100,7 +100,7 @@ const VehicleTypeController = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!vehicleTypeIdsdb && vehicleTypeIdsdb.length > 0 ? [vehicleTypeIdsdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -117,7 +117,7 @@ const VehicleTypeController = {
                     }
                 }
             })
-            res.json(response(req, RESPONSE_CODE.SUCCESS))
+            res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

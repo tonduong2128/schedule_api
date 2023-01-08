@@ -29,7 +29,7 @@ const ReservationController = {
                 ]
             }).then(r => r?.toJSON() || null)
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -81,7 +81,7 @@ const ReservationController = {
             const { reservation } = body;
             const timeValid = reservation.startTime <= reservation.endTime;
             if (!timeValid) {
-                return res.json(response(req, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
             const checkReservationExists = await Reservation.findOne({
                 where: {
@@ -118,13 +118,13 @@ const ReservationController = {
             })
 
             if (!!checkReservationExists) {
-                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, []))
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
             reservation.createdBy = _user.id;
             const reservationdb = await Reservation.create(reservation).then(r => r?.toJSON() || null);
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -137,7 +137,7 @@ const ReservationController = {
 
             const timeValid = reservation.startTime <= reservation.endTime;
             if (!timeValid) {
-                return res.json(response(req, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
             const checkReservationExists = await Reservation.findOne({
                 where: {
@@ -173,7 +173,7 @@ const ReservationController = {
                 }
             })
             if (!!checkReservationExists) {
-                return res.json(response(req, RESPONSE_CODE.RESERVATION_EXISTS, []))
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
             const reservationIddb = await Reservation.update(reservation, {
                 where: {
@@ -187,7 +187,7 @@ const ReservationController = {
             }).then(r => r?.toJSON() || null)
 
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -212,7 +212,7 @@ const ReservationController = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!reservationsdb && reservationsdb.length > 0 ? [reservationsdb] : [];
-            res.json(response(req, RESPONSE_CODE.SUCCESS, records))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
@@ -229,7 +229,7 @@ const ReservationController = {
                     }
                 }
             })
-            res.json(response(req, RESPONSE_CODE.SUCCESS))
+            res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

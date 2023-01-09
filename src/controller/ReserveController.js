@@ -193,7 +193,13 @@ const ReservationController = {
             const reservationdb = await Reservation.findOne({
                 where: {
                     id: reservation.id || 0,
-                }
+                },
+                include: [
+                    {
+                        model: User,
+                        as: "CreatedBy"
+                    }
+                ]
             }).then(r => r?.toJSON() || null)
 
             const records = !!reservationdb ? [reservationdb] : [];

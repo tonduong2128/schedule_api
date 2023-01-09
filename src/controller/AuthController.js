@@ -26,7 +26,7 @@ const AuthController = {
                     {
                         model: User,
                         as: "Students",
-                    }
+                    },
                 ]
             }).then(r => r?.toJSON() || null)
             const matchPassword = bcrypt.compare(user.password, userdb.password)

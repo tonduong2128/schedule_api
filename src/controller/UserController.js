@@ -8,7 +8,13 @@ const UserComtroller = {
         try {
             const { id } = req.params
             const userdb = await User.findOne({
-                where: { id }
+                where: { id },
+                include: [
+                    {
+                        model: User,
+                        as: "Teachers",
+                    },
+                ]
             }).then(r => r?.toJSON() || null)
             const records = !!userdb ? [userdb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))

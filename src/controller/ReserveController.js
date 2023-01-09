@@ -80,10 +80,13 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
-            const checkReservationExists = await Reservation.findOne({
+            const reservationdbOld = await Reservation.findOne({
                 where: {
                     id: { [Op.ne]: reservation.id },
-                    teacherId: reservation.teacherId,
+                    [Op.or]: [
+                        { teacherId: reservation.teacherId },
+                        { createdBy: _user.id }
+                    ],
                     targetDate: reservation.targetDate,
                     [Op.or]: [
                         {
@@ -114,7 +117,10 @@ const ReservationController = {
                 }
             })
 
-            if (!!checkReservationExists) {
+            if (reservationdbOld?.createdBy === _user.id) {
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
+            }
+            if (reservationdbOld?.teacherId === reservation.teacherId) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
@@ -129,6 +135,7 @@ const ReservationController = {
     },
     async update(req, res, next) {
         try {
+            const { _user } = res.locals
             const { body } = req;
             const { reservation } = body;
 
@@ -136,10 +143,13 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
-            const checkReservationExists = await Reservation.findOne({
+            const reservationdbOld = await Reservation.findOne({
                 where: {
                     id: { [Op.ne]: reservation.id },
-                    teacherId: reservation.teacherId,
+                    [Op.or]: [
+                        { teacherId: reservation.teacherId },
+                        { createdBy: _user.id }
+                    ],
                     targetDate: reservation.targetDate,
                     [Op.or]: [
                         {
@@ -169,7 +179,10 @@ const ReservationController = {
                     ]
                 }
             })
-            if (!!checkReservationExists) {
+            if (reservationdbOld?.createdBy === _user.id) {
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
+            }
+            if (reservationdbOld?.teacherId === reservation.teacherId) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
             const reservationIddb = await Reservation.update(reservation, {

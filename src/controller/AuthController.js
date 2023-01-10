@@ -17,7 +17,6 @@ const AuthController = {
                     {
                         model: Role,
                         as: "Roles",
-                        attributes: ["code"]
                     },
                     {
                         model: User,

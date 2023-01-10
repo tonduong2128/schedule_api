@@ -10,6 +10,10 @@ Role.belongsToMany(User, { through: 'user_role', as: "Users", foreignKey: "roleI
 User.belongsToMany(User, { through: 'student_teacher', as: "Teachers", foreignKey: "studentId", timestamps: false });
 User.belongsToMany(User, { through: 'student_teacher', as: "Students", foreignKey: "teacherId", timestamps: false });
 
+User.hasMany(User_Role, {
+    foreignKey: "userId",
+    as: "User_Roles"
+})
 
 User.hasMany(Reservation, {
     foreignKey: "createdBy",

@@ -76,7 +76,7 @@ const ReservationController = {
             const { _user } = res.locals;
             const { body } = req;
             const { reservation } = body;
-            const timeValid = reservation.startTime <= reservation.endTime;
+            const timeValid = reservation.startTime < reservation.endTime;
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
@@ -113,6 +113,7 @@ const ReservationController = {
                                 [Op.lte]: reservation.endTime
                             }
                         },
+
                     ]
                 }
             })
@@ -125,7 +126,19 @@ const ReservationController = {
             }
 
             reservation.createdBy = _user.id;
-            const reservationdb = await Reservation.create(reservation).then(r => r?.toJSON() || null);
+            const reservationdb = await Reservation.create(reservation)
+                .then(async r => {
+                    const reservation = r?.toJSON() || {};
+                    return Reservation.findOne({
+                        where: { id: reservation.id },
+                        include: [
+                            {
+                                model: User,
+                                as: "CreatedBy"
+                            }
+                        ]
+                    }).then(r => r.toJSON() || null)
+                });
             const records = !!reservationdb ? [reservationdb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
@@ -139,7 +152,7 @@ const ReservationController = {
             const { body } = req;
             const { reservation } = body;
 
-            const timeValid = reservation.startTime <= reservation.endTime;
+            const timeValid = reservation.startTime < reservation.endTime;
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
@@ -224,8 +237,12 @@ const ReservationController = {
                 where: {
                     id: {
                         [Op.in]: reservationIds
-                    }
-                }
+                    },
+                },
+                include: [{
+                    model: User,
+                    as: "CreatedBy"
+                }]
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!reservationsdb && reservationsdb.length > 0 ? [reservationsdb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))

@@ -16,7 +16,6 @@ const auth = async (req, res, next) => {
                 {
                     model: Role,
                     as: "Roles",
-                    attributes: ["code"]
                 },
                 {
                     model: User,

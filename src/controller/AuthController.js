@@ -1,8 +1,12 @@
 
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
 import { Role, User } from "../db/model/index.js";
 import { bcrypt, response } from "../util/index.js";
+import { MailService } from "../service/index.js"
+import Otp_Record from "../db/model/otp_record.js";
+import moment from "moment";
 
 const AuthController = {
     async login(req, res, next) {
@@ -62,7 +66,94 @@ const AuthController = {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
+    },
+    async reset(req, res, next) {
+        try {
+            const { user, optCode } = req.body
+            const { username, phone, email, password } = user;
+            const userdb = await User.findOne({
+                where: {
+                    username: username,
+                    [Op.or]: [
+                        { phone: phone || null },
+                        { email: email || null }
+                    ]
+                }
+            })
+            if (!userdb) {
+                return res.json(response(res, RESPONSE_CODE.USERNAME_OR_PASSWORD_NOT_MATCH))
+            }
+            if (!optCode) {
+                const code = randomCode(5);
+                const sms_record = {
+                    code,
+                    used: false,
+                    createdBy: userdb.id,
+                    createdDate: moment()
+                }
+                const sms_recorddb = await Otp_Record.create(sms_record);
+                const mail_send = await MailService.sendMail(email,
+                    "Lấy lại mật khẩu",
+                    `Mã của bạn là: ${code} \n Mã sẽ hết hạn sau: ${process.env.OTP_EXPRID} phút.`);
+                if (!!sms_recorddb && !!mail_send) {
+                    return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                } else {
+                    throw Error("Cannot create sms record")
+                }
+            } else {
+                const sms_recorddb = await Otp_Record.findOne({
+                    where: {
+                        createdBy: userdb.id,
+                        updatedBy: null,
+                        code: optCode,
+                        createdDate: {
+                            [Op.lte]: moment().add(process.env.OTP_EXPRID, "minute"),
+                        },
+                        used: false
+                    }
+                });
+                if (!!sms_recorddb) {
+                    await sms_recorddb.update({
+                        updatedBy: userdb.id
+                    });
+                    return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                } else {
+                    const sms_recorddb_2 = await Otp_Record.findOne({
+                        where: {
+                            createdBy: userdb.id,
+                            updatedBy: userdb.id,
+                            createdDate: {
+                                [Op.lte]: moment().add(process.env.OTP_EXPRID, "minute"),
+                            },
+                            used: false
+                        }
+                    });
+                    if (sms_recorddb_2) {
+                        sms_recorddb_2.update({
+                            used: true
+                        })
+                        await userdb.update({
+                            password,
+                        })
+                        return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                    } else {
+                        throw Error("Opt exprid")
+                    }
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+        }
     }
 }
 
+const randomCode = (count) => {
+    const random = () => Math.ceil(Math.random() * 10)
+    let code = ""
+    for (let index = 0; index < count; index++) {
+        code += `${random()}`;
+    }
+    return code;
+}
 export default AuthController

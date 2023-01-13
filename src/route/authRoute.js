@@ -4,6 +4,7 @@ import auth from "../middleware/auth.js";
 const AuthRouter = express.Router();
 
 AuthRouter.post("/login", AuthController.login)
+AuthRouter.post("/reset", AuthController.reset)
 AuthRouter.post("/reset-force", auth, AuthController.resetForce)
 
 export default AuthRouter

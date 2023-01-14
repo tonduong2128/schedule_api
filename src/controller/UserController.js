@@ -1,7 +1,7 @@
 
 import { Op } from "sequelize";
-import { RESPONSE_CODE } from "../constant/index.js";
-import { User } from "../db/model/index.js";
+import { RESPONSE_CODE, ROLE } from "../constant/index.js";
+import { Role, User } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
     async getById(req, res, next) {
@@ -27,20 +27,38 @@ const UserComtroller = {
         try {
             const { query } = req;
             const searchOption = JSON.parse(query.searchOption);
-            const searchModel = JSON.parse(query.searchModel);
+            let searchModel = JSON.parse(query.searchModel);
+            const searchOther = JSON.parse(query.searchOther);
             const limit = searchOption.limit;
             const page = searchOption.page;
             const offset = (page - 1) * limit;
             const order = []
 
+            const { isAdmin } = searchOther;
+            if (isAdmin) {
+                searchModel = {}
+            }
+            const queryIncludes = {
+
+            }
             const result = await User.findAndCountAll({
                 where: {
                     ...searchModel
                 },
+                include: [
+                    {
+                        model: Role,
+                        as: "Roles",
+                        where: {
+                            id: ROLE.teacher
+                        }
+                    }
+                ],
                 limit,
                 offset,
                 order,
             })
+
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);

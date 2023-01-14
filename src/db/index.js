@@ -10,8 +10,10 @@ const sequelize = new Sequelize(
         ...realConfig,
         operatorsAliases: {
             $in: Op.in,
+            $or: Op.or,
             $ne: Op.ne,
             $and: Op.and,
+            $like: Op.like,
             $between: Op.between
         }
     }

@@ -12,7 +12,7 @@ User.belongsToMany(User, { through: 'student_teacher', as: "Students", foreignKe
 
 User.hasMany(User_Role, {
     foreignKey: "userId",
-    as: "User_Roles"
+    as: "User_Roles",
 })
 
 User.hasMany(Reservation, {

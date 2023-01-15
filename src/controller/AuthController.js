@@ -145,6 +145,27 @@ const AuthController = {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
+    },
+    async changePassword(req, res, next) {
+        try {
+            const { _user } = res.locals
+            const { oldPassword, newPassword } = req.body
+            const user = await User.findOne({
+                id: _user.id
+            })
+            const matchPassword = bcrypt.compare(oldPassword, user.password);
+            if (matchPassword) {
+                await user.update({
+                    passowrd: newPassword
+                })
+                res.json(response(res, RESPONSE_CODE.SUCCESS))
+            } else {
+                res.json(response(res, RESPONSE_CODE.OLD_PASSWORD_NOT_MATCH))
+            }
+        } catch (error) {
+            console.log(error);
+            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+        }
     }
 }
 

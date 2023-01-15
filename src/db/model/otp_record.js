@@ -26,7 +26,7 @@ const Otp_Record = sequelize.define('otp_record', {
 }, {
     modelName: "Otp_Record",
     tableName: "otp_record",
-    timestamps: false
+    timestamps: false,
 });
 
 export default Otp_Record

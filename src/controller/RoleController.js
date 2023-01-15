@@ -1,27 +1,16 @@
 
 import { Op } from "sequelize";
-import { RESPONSE_CODE, ROLE } from "../constant/index.js";
-import { Role, User, User_Role } from "../db/model/index.js";
+import { RESPONSE_CODE } from "../constant/index.js";
+import { Role } from "../db/model/index.js";
 import { response } from "../util/index.js";
-const UserComtroller = {
+const RoleController = {
     async getById(req, res, next) {
         try {
             const { id } = req.params
-            const userdb = await User.findOne({
-                where: { id },
-                include: [
-                    {
-                        model: User,
-                        as: "Teachers",
-                    },
-
-                    {
-                        model: User_Role,
-                        as: "User_Roles",
-                    },
-                ]
+            const role = await Role.findOne({
+                where: { id }
             }).then(r => r?.toJSON() || null)
-            const records = !!userdb ? [userdb] : [];
+            const records = !!role ? [role] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
@@ -32,36 +21,20 @@ const UserComtroller = {
         try {
             const { query } = req;
             const searchOption = JSON.parse(query.searchOption);
-            let searchModel = JSON.parse(query.searchModel);
-            const searchOther = JSON.parse(query.searchOther);
+            const searchModel = JSON.parse(query.searchModel);
+
             const limit = searchOption.limit;
             const page = searchOption.page;
             const offset = (page - 1) * limit;
             const order = []
-
-            const { isAdmin } = searchOther;
-            let queryIncludes = []
-            if (isAdmin) {
-                searchModel = {}
-                queryIncludes = [{
-                    model: Role,
-                    as: "Roles",
-                    where: {
-                        id: ROLE.teacher
-                    }
-                }]
-            }
-
-            const result = await User.findAndCountAll({
+            const result = await Role.findAndCountAll({
                 where: {
                     ...searchModel
                 },
-                include: queryIncludes,
                 limit,
                 offset,
                 order,
             })
-
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
@@ -75,15 +48,10 @@ const UserComtroller = {
         try {
             const { _user } = res.locals
             const { body } = req;
-            const { user } = body;
-            user.createdBy = _user.id
-            const userdb = await User.create(user, {
-                include: [{
-                    model: User_Role,
-                    as: "User_Roles"
-                }]
-            }).then(r => r?.toJSON() || null);
-            const records = !!userdb ? [userdb] : [];
+            const { role } = body;
+            role.createdBy = _user.id
+            const vehicleTypedb = await Role.create(role).then(r => r?.toJSON() || null);
+            const records = !!vehicleTypedb ? [vehicleTypedb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
@@ -93,22 +61,20 @@ const UserComtroller = {
     async update(req, res, next) {
         try {
             const { body } = req;
-            const { user } = body;
-            delete user.username;
-            delete user.password;
-            const userIddb = await User.update(user, {
+            const { roleType } = body;
+            const roleIddb = await Role.update(roleType, {
                 where: {
                     [Op.or]: [
-                        { id: user.id || 0 },
+                        { id: roleType.id || 0 },
                     ],
                 }
             })
-            const userdb = await User.findOne({
+            const roledb = await Role.findOne({
                 where: {
-                    id: user.id || 0,
+                    id: roleType.id || 0,
                 }
             }).then(r => r?.toJSON() || null)
-            const records = !!userdb ? [userdb] : [];
+            const records = !!roledb ? [roledb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
@@ -118,22 +84,22 @@ const UserComtroller = {
     async updateMany(req, res, next) {
         try {
             const { body } = req;
-            const { userIds, userUpdates } = body;
-            const usersIddb = await User.update(userUpdates, {
+            const { roleIds, roleUpdates } = body;
+            const rolesIddb = await Role.update(roleUpdates, {
                 where: {
                     id: {
-                        [Op.in]: userIds
+                        [Op.in]: roleIds
                     },
                 }
             })
-            const usersdb = await User.findAll({
+            const roleIdsdb = await Role.findAll({
                 where: {
                     id: {
-                        [Op.in]: userIds
+                        [Op.in]: roleIds
                     }
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
-            const records = !!usersdb && usersdb.length > 0 ? [usersdb] : [];
+            const records = !!roleIdsdb && roleIdsdb.length > 0 ? [roleIdsdb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
@@ -143,11 +109,11 @@ const UserComtroller = {
     async delete(req, res, next) {
         try {
             const { body } = req;
-            const { userIds } = body;
-            const usersCountdb = await User.destroy({
+            const { roleIds } = body;
+            const rolesCountdb = await Role.destroy({
                 where: {
                     id: {
-                        [Op.in]: userIds
+                        [Op.in]: roleIds
                     }
                 }
             })
@@ -159,4 +125,4 @@ const UserComtroller = {
     },
 }
 
-export default UserComtroller
+export default RoleController

@@ -35,25 +35,23 @@ const UserComtroller = {
             const order = []
 
             const { isAdmin } = searchOther;
+            let queryIncludes = []
             if (isAdmin) {
                 searchModel = {}
+                queryIncludes = [{
+                    model: Role,
+                    as: "Roles",
+                    where: {
+                        id: ROLE.teacher
+                    }
+                }]
             }
-            const queryIncludes = {
 
-            }
             const result = await User.findAndCountAll({
                 where: {
                     ...searchModel
                 },
-                include: [
-                    {
-                        model: Role,
-                        as: "Roles",
-                        where: {
-                            id: ROLE.teacher
-                        }
-                    }
-                ],
+                include: queryIncludes,
                 limit,
                 offset,
                 order,

@@ -56,7 +56,17 @@ const UserComtroller = {
                 where: {
                     ...searchModel
                 },
-                include: queryIncludes,
+                include: [
+                    ...queryIncludes,
+                    {
+                        model: User,
+                        as: "CreatedBy"
+                    },
+                    {
+                        model: User,
+                        as: "UpdatedBy"
+                    }
+                ],
                 limit,
                 offset,
                 order,

@@ -1,14 +1,18 @@
 import Reservation from './reservation.js';
 import Role from './role.js';
+import Student_Teacher from './student_teacher.js';
 import User from './user.js';
 import User_Role from './user_role.js';
 import Vehicle_Type from './vehicle_type.js';
 
-User.belongsToMany(Role, { through: 'user_role', as: "Roles", foreignKey: "userId", timestamps: false });
+User.belongsToMany(Role, { through: 'user_role', as: "Roles", foreignKey: "userId", timestamps: false, onDelete: "CASCADE" });
 Role.belongsToMany(User, { through: 'user_role', as: "Users", foreignKey: "roleId", timestamps: false });
 
 User.belongsToMany(User, { through: 'student_teacher', as: "Teachers", foreignKey: "studentId", timestamps: false });
 User.belongsToMany(User, { through: 'student_teacher', as: "Students", foreignKey: "teacherId", timestamps: false });
+
+User.hasMany(Student_Teacher, { as: "Student_Teachers", foreignKey: "teacherId", onDelete: "CASCADE" });
+User.hasMany(Student_Teacher, { as: "Students_Teacher", foreignKey: "studentId", onDelete: "CASCADE" });
 
 User.belongsTo(User, { as: "UpdatedBy", foreignKey: "updatedBy" });
 User.belongsTo(User, { as: "CreatedBy", foreignKey: "createdBy" });

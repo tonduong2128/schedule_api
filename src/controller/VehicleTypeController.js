@@ -49,7 +49,7 @@ const VehicleTypeController = {
             const { _user } = res.locals
             const { body } = req;
             const { vehicleType } = body;
-            vehicleType.createdBy = _user.id
+            vehicleType.createdBy = vehicleType.createdBy || _user.id
             const vehicleTypedb = await Vehicle_Type.create(vehicleType).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))

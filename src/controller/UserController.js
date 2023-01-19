@@ -2,6 +2,7 @@
 import { Op } from "sequelize";
 import { RESPONSE_CODE, ROLE } from "../constant/index.js";
 import { Role, User, User_Role } from "../db/model/index.js";
+import Student_Teacher from "../db/model/student_teacher.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
     async getById(req, res, next) {
@@ -32,35 +33,54 @@ const UserComtroller = {
         try {
             const { query } = req;
             const searchOption = JSON.parse(query.searchOption);
-            let searchModel = JSON.parse(query.searchModel);
+            const searchModel = JSON.parse(query.searchModel);
             const searchOther = JSON.parse(query.searchOther);
-            const limit = searchOption.limit;
-            const page = searchOption.page;
+            const { limit, page } = searchOption;
             const offset = (page - 1) * limit;
             const order = []
 
-            const { isAdmin } = searchOther;
+            const { teacher, student, teacherId } = searchOther;
             let queryIncludes = []
-            if (isAdmin) {
-                searchModel = {}
+            if (teacher) {
                 queryIncludes = [{
                     model: Role,
                     as: "Roles",
                     where: {
-                        id: ROLE.teacher
+                        id: {
+                            [Op.or]: [ROLE.teacher, ROLE.teacher_vip]
+                        }
                     }
                 }]
+            }
+            if (student && teacherId) {
+                queryIncludes = [
+                    {
+                        model: Role,
+                        as: "Roles",
+                        where: {
+                            id: ROLE.student
+                        },
+                    },
+                    {
+                        model: Student_Teacher,
+                        as: "Students_Teacher",
+                        where: {
+                            teacherId: teacherId
+                        },
+                    }
+                ]
+
             }
 
             const result = await User.findAndCountAll({
                 where: {
-                    ...searchModel
+                    ...searchModel,
                 },
                 include: [
                     ...queryIncludes,
                     {
                         model: User,
-                        as: "CreatedBy"
+                        as: "CreatedBy",
                     },
                     {
                         model: User,
@@ -86,7 +106,7 @@ const UserComtroller = {
             const { _user } = res.locals
             const { body } = req;
             const { user } = body;
-            user.createdBy = _user.id
+            user.createdBy = user.createdBy || _user.id
             const userdb = await User.create(user, {
                 include: [{
                     model: User_Role,
@@ -159,7 +179,8 @@ const UserComtroller = {
                     id: {
                         [Op.in]: userIds
                     }
-                }
+                },
+                force: true
             })
             res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {

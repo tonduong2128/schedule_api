@@ -80,12 +80,13 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
+            reservation.createdBy = reservation.createdBy || _user.id;
             const reservationdbOld = await Reservation.findOne({
                 where: {
                     id: { [Op.ne]: reservation.id },
                     [Op.or]: [
                         { teacherId: reservation.teacherId },
-                        { createdBy: _user.id }
+                        { createdBy: reservation.createdBy }
                     ],
                     targetDate: reservation.targetDate,
                     [Op.or]: [
@@ -125,7 +126,7 @@ const ReservationController = {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
-            reservation.createdBy = _user.id;
+            reservation.createdBy = reservation.createdBy || _user.id
             const reservationdb = await Reservation.create(reservation)
                 .then(async r => {
                     const reservation = r?.toJSON() || {};
@@ -161,7 +162,7 @@ const ReservationController = {
                     id: { [Op.ne]: reservation.id },
                     [Op.or]: [
                         { teacherId: reservation.teacherId },
-                        { createdBy: _user.id }
+                        { createdBy: reservation.createdBy }
                     ],
                     targetDate: reservation.targetDate,
                     [Op.or]: [

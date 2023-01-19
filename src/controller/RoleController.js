@@ -49,7 +49,7 @@ const RoleController = {
             const { _user } = res.locals
             const { body } = req;
             const { role } = body;
-            role.createdBy = _user.id
+            role.createdBy = role.createdBy || _user.id
             const vehicleTypedb = await Role.create(role).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))

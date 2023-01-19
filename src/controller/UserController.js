@@ -1,8 +1,7 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE, ROLE } from "../constant/index.js";
-import { Role, User, User_Role } from "../db/model/index.js";
-import Student_Teacher from "../db/model/student_teacher.js";
+import { Role, Student_Teacher, User, User_Role } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
     async getById(req, res, next) {
@@ -15,10 +14,13 @@ const UserComtroller = {
                         model: User,
                         as: "Teachers",
                     },
-
                     {
                         model: User_Role,
                         as: "User_Roles",
+                    },
+                    {
+                        model: Student_Teacher,
+                        as: "Students_Teacher",
                     },
                 ]
             }).then(r => r?.toJSON() || null)
@@ -39,10 +41,10 @@ const UserComtroller = {
             const offset = (page - 1) * limit;
             const order = []
 
-            const { teacher, student, teacherId } = searchOther;
+            const { teacher, student, teacherId, studentId } = searchOther;
             let queryIncludes = []
             if (teacher) {
-                queryIncludes = [{
+                queryIncludes.push({
                     model: Role,
                     as: "Roles",
                     where: {
@@ -50,28 +52,40 @@ const UserComtroller = {
                             [Op.or]: [ROLE.teacher, ROLE.teacher_vip]
                         }
                     }
-                }]
+                })
             }
             if (student && teacherId) {
-                queryIncludes = [
-                    {
-                        model: Role,
-                        as: "Roles",
-                        where: {
-                            id: ROLE.student
-                        },
+                queryIncludes.push({
+                    model: Role,
+                    as: "Roles",
+                    where: {
+                        id: ROLE.student
                     },
-                    {
-                        model: Student_Teacher,
-                        as: "Students_Teacher",
-                        where: {
-                            teacherId: teacherId
-                        },
-                    }
-                ]
-
+                }, {
+                    model: Student_Teacher,
+                    as: "Students_Teacher",
+                    where: {
+                        teacherId: teacherId
+                    },
+                })
             }
-
+            if (student && studentId) {
+                queryIncludes.push({
+                    model: Role,
+                    as: "Roles",
+                    where: {
+                        id: {
+                            [Op.or]: [ROLE.teacher, ROLE.teacher_vip]
+                        }
+                    },
+                }, {
+                    model: Student_Teacher,
+                    as: "Student_Teachers",
+                    where: {
+                        studentId: studentId
+                    },
+                })
+            }
             const result = await User.findAndCountAll({
                 where: {
                     ...searchModel,
@@ -111,6 +125,9 @@ const UserComtroller = {
                 include: [{
                     model: User_Role,
                     as: "User_Roles"
+                }, {
+                    model: Student_Teacher,
+                    as: "Students_Teacher"
                 }]
             }).then(r => r?.toJSON() || null);
             const records = !!userdb ? [userdb] : [];

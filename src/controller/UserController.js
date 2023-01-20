@@ -191,15 +191,19 @@ const UserComtroller = {
         try {
             const { body } = req;
             const { userIds } = body;
-            const usersCountdb = await User.destroy({
-                where: {
-                    id: {
-                        [Op.in]: userIds
-                    }
-                },
-                force: true
-            })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            try {
+                const usersCountdb = await User.destroy({
+                    where: {
+                        id: {
+                            [Op.in]: userIds
+                        }
+                    },
+                })
+                res.json(response(res, RESPONSE_CODE.SUCCESS))
+            } catch (error) {
+                console.log(error);
+                res.json(response(res, RESPONSE_CODE.USER_HAD_USED))
+            }
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

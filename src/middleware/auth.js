@@ -23,12 +23,12 @@ const auth = async (req, res, next) => {
                 }
             ]
         }).then(r => r?.toJSON() || null)
-        const dateNow = moment().toDate().getTime();
-        // if (_user.exp * 1000 < dateNow) {
-        //     return res.json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
-        // }
-        const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
         res.locals = {}
+        const dateNow = moment().toDate().getTime();
+        if (_user.exp * 1000 < dateNow) {
+            return res.json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
+        }
+        const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
         res.locals._user = userdb;
         res.locals.token = newToken;
         next()

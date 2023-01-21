@@ -199,6 +199,7 @@ const ReservationController = {
             if (reservationdbOld?.teacherId === reservation.teacherId) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
+            reservation.updatedBy = _user.id;
             const reservationIddb = await Reservation.update(reservation, {
                 where: {
                     id: reservation.id || 0
@@ -225,8 +226,10 @@ const ReservationController = {
     },
     async updateMany(req, res, next) {
         try {
+            const { _user } = res.locals
             const { body } = req;
             const { reservationIds, reservationUpdates } = body;
+            reservationUpdates.updatedBy = _user.id;
             const reservationIddb = await Reservation.update(reservationUpdates, {
                 where: {
                     id: {

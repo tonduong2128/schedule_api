@@ -60,8 +60,10 @@ const RoleController = {
     },
     async update(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { roleType } = body;
+            roleType.updatedBy = _user.id
             const roleIddb = await Role.update(roleType, {
                 where: {
                     [Op.or]: [
@@ -83,8 +85,10 @@ const RoleController = {
     },
     async updateMany(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { roleIds, roleUpdates } = body;
+            roleUpdates.updatedBy = _user.id
             const rolesIddb = await Role.update(roleUpdates, {
                 where: {
                     id: {

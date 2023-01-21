@@ -60,8 +60,10 @@ const VehicleTypeController = {
     },
     async update(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { vehicleType } = body;
+            vehicleType.updatedBy = _user.id;
             const vehicleTypeIddb = await Vehicle_Type.update(vehicleType, {
                 where: {
                     [Op.or]: [
@@ -83,8 +85,10 @@ const VehicleTypeController = {
     },
     async updateMany(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { vehicleTypeIds, vehicleTypeUpdates } = body;
+            vehicleTypeUpdates.updatedBy = _user.id
             const vehicleTypesIddb = await Vehicle_Type.update(vehicleTypeUpdates, {
                 where: {
                     id: {

@@ -139,10 +139,12 @@ const UserComtroller = {
     },
     async update(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { user } = body;
             delete user.username;
             delete user.password;
+            user.updatedBy = _user.id;
             const userIddb = await User.update(user, {
                 where: {
                     [Op.or]: [
@@ -164,8 +166,10 @@ const UserComtroller = {
     },
     async updateMany(req, res, next) {
         try {
+            const { _user } = res.locals;
             const { body } = req;
             const { userIds, userUpdates } = body;
+            userUpdates.updatedBy = _user.id;
             const usersIddb = await User.update(userUpdates, {
                 where: {
                     id: {

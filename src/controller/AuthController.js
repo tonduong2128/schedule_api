@@ -1,7 +1,7 @@
 
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
-import { RESPONSE_CODE } from "../constant/index.js";
+import { RESPONSE_CODE, STATUS_USER } from "../constant/index.js";
 import { Role, User } from "../db/model/index.js";
 import { bcrypt, response } from "../util/index.js";
 import { MailService } from "../service/index.js"
@@ -15,7 +15,7 @@ const AuthController = {
             const { user } = body;
             const userdb = await User.findOne({
                 where: {
-                    username: user.username
+                    username: user.username,
                 },
                 include: [
                     {
@@ -34,6 +34,9 @@ const AuthController = {
             }).then(r => r?.toJSON() || null)
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {
+                if (userdb.status === STATUS_USER.exprid) {
+                    return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
+                }
                 const token = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
                 const newResponse = response(res, RESPONSE_CODE.SUCCESS);
                 newResponse.token = token

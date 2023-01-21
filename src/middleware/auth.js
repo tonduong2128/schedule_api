@@ -1,16 +1,20 @@
 import jwt from "jsonwebtoken";
 import moment from "moment/moment.js";
-import { RESPONSE_CODE } from "../constant/index.js";
+import { RESPONSE_CODE, STATUS_USER } from "../constant/index.js";
 import { Role, User, User_Role } from "../db/model/index.js";
 import { response } from "../util/index.js";
 
 const auth = async (req, res, next) => {
     try {
+        res.locals = {}
         const token = req.headers.authorization;
         const _user = jwt.decode(token, process.env.SECRET_KEY);
+        if (!_user) {
+            return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
+        }
         const userdb = await User.findOne({
             where: {
-                id: _user.id
+                id: _user.id,
             },
             include: [
                 {
@@ -23,10 +27,12 @@ const auth = async (req, res, next) => {
                 }
             ]
         }).then(r => r?.toJSON() || null)
-        res.locals = {}
         const dateNow = moment().toDate().getTime();
         if (_user.exp * 1000 < dateNow) {
             return res.json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
+        }
+        if (userdb.status === STATUS_USER.exprid) {
+            return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
         }
         const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
         res.locals._user = userdb;

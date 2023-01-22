@@ -7,7 +7,8 @@ import { bcrypt, response } from "../util/index.js";
 import { MailService } from "../service/index.js"
 import Otp_Record from "../db/model/otp_record.js";
 import moment from "moment";
-import net from 'net';
+import http from 'http';
+
 
 const AuthController = {
     async login(req, res, next) {
@@ -46,9 +47,11 @@ const AuthController = {
                 res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
-            const client = net.connect({ port: 80, host: "google.com" })
-            console.log(client);
-            console.log("error");
+            http.get({ 'host': 'api.ipify.org', 'port': 80, 'path': '/' }, function (resp) {
+                resp.on('data', function (ip) {
+                    console.log("My public IP address is: " + ip);
+                });
+            });
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }

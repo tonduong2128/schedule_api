@@ -46,10 +46,9 @@ const AuthController = {
                 res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
-            const client = net.connect({ port: 80, host: "google.com" }, () => {
-                console.log('MyIP=' + client.localAddress);
-                console.log('MyPORT=' + client.localPort);
-            });
+            const client = net.connect({ port: 80, host: "google.com" })
+            console.log(client);
+            console.log("error");
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }

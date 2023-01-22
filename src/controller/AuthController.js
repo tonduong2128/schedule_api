@@ -7,7 +7,7 @@ import { bcrypt, response } from "../util/index.js";
 import { MailService } from "../service/index.js"
 import Otp_Record from "../db/model/otp_record.js";
 import moment from "moment";
-import { publicIp } from "public-ip";
+import { publicIpv4 } from "public-ip";
 
 
 const AuthController = {
@@ -47,7 +47,7 @@ const AuthController = {
                 res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
-            const ip = await publicIp.v4().then(ip => ip);
+            const ip = await publicIpv4().then(ip => ip);
             console.log("IP: " + ip);
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

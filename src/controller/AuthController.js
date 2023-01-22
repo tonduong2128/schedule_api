@@ -7,6 +7,7 @@ import { bcrypt, response } from "../util/index.js";
 import { MailService } from "../service/index.js"
 import Otp_Record from "../db/model/otp_record.js";
 import moment from "moment";
+import net from 'net';
 
 const AuthController = {
     async login(req, res, next) {
@@ -45,6 +46,10 @@ const AuthController = {
                 res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
+            const client = net.connect({ port: 80, host: "google.com" }, () => {
+                console.log('MyIP=' + client.localAddress);
+                console.log('MyPORT=' + client.localPort);
+            });
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }

@@ -63,12 +63,20 @@ const ReservationController = {
                     },
                     {
                         model: User,
+                        as: "UpdatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "Teacher",
+                    },
+                    {
+                        model: User,
                         as: "Student",
                     },
                     {
                         model: Vehicle_Type,
-                        as: "VehicleType",
-                    },
+                        as: "VehicleType"
+                    }
                 ],
                 limit,
                 offset,
@@ -151,12 +159,24 @@ const ReservationController = {
                         include: [
                             {
                                 model: User,
-                                as: "CreatedBy"
+                                as: "CreatedBy",
+                            },
+                            {
+                                model: User,
+                                as: "UpdatedBy",
+                            },
+                            {
+                                model: User,
+                                as: "Teacher",
                             },
                             {
                                 model: User,
                                 as: "Student",
                             },
+                            {
+                                model: Vehicle_Type,
+                                as: "VehicleType"
+                            }
                         ]
                     }).then(r => r.toJSON() || null)
                 });
@@ -242,8 +262,20 @@ const ReservationController = {
                     },
                     {
                         model: User,
+                        as: "UpdatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "Teacher",
+                    },
+                    {
+                        model: User,
                         as: "Student",
                     },
+                    {
+                        model: Vehicle_Type,
+                        as: "VehicleType"
+                    }
                 ]
             }).then(r => r?.toJSON() || null)
 
@@ -275,11 +307,23 @@ const ReservationController = {
                 },
                 include: [{
                     model: User,
-                    as: "CreatedBy"
+                    as: "CreatedBy",
+                },
+                {
+                    model: User,
+                    as: "UpdatedBy",
+                },
+                {
+                    model: User,
+                    as: "Teacher",
                 },
                 {
                     model: User,
                     as: "Student",
+                },
+                {
+                    model: Vehicle_Type,
+                    as: "VehicleType"
                 }]
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!reservationsdb && reservationsdb.length > 0 ? [reservationsdb] : [];

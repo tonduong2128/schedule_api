@@ -1,13 +1,13 @@
 
 import jwt from "jsonwebtoken";
-import { Op } from "sequelize";
-import { RESPONSE_CODE, STATUS_USER } from "../constant/index.js";
-import { Role, User } from "../db/model/index.js";
-import { bcrypt, response } from "../util/index.js";
-import { MailService } from "../service/index.js"
-import Otp_Record from "../db/model/otp_record.js";
 import moment from "moment";
 import { publicIpv4 } from "public-ip";
+import { Op } from "sequelize";
+import { PASSWORD_DEFAULT, RESPONSE_CODE, ROLE, STATUS_USER } from "../constant/index.js";
+import { Role, User } from "../db/model/index.js";
+import Otp_Record from "../db/model/otp_record.js";
+import { MailService } from "../service/index.js";
+import { bcrypt, response } from "../util/index.js";
 
 
 const AuthController = {
@@ -62,11 +62,11 @@ const AuthController = {
                     id: user.id || 0
                 }
             })
-            if (!_user && !userdb) {
-                throw new Error("Authen faild in reset password");
+            if (!_user && !userdb && !_user.Roles.some(r => r.id === ROLE.admin || r.id === ROLE.teacher || r.id === ROLE.teacher_vip)) {
+                res.json(response(res, RESPONSE_CODE.NO_PERMISSION))
             }
             await userdb.update({
-                password: user.password,
+                password: PASSWORD_DEFAULT,
             })
             res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {

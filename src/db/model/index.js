@@ -28,6 +28,10 @@ User.hasMany(Reservation, {
     as: "Reservations"
 })
 Reservation.belongsTo(User, {
+    foreignKey: "studentId",
+    as: "Student",
+})
+Reservation.belongsTo(User, {
     foreignKey: "createdBy",
     as: "CreatedBy",
 })

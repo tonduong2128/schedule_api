@@ -23,6 +23,10 @@ const ReservationController = {
                         as: "Teacher",
                     },
                     {
+                        model: User,
+                        as: "Student",
+                    },
+                    {
                         model: Vehicle_Type,
                         as: "VehicleType"
                     }
@@ -55,8 +59,12 @@ const ReservationController = {
                 include: [
                     {
                         model: User,
-                        as: "CreatedBy"
-                    }
+                        as: "CreatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "Student",
+                    },
                 ],
                 limit,
                 offset,
@@ -80,7 +88,7 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
-            reservation.createdBy = reservation.createdBy || _user.id;
+            reservation.createdBy = _user.id;
             const reservationdbOld = await Reservation.findOne({
                 where: {
                     id: { [Op.ne]: reservation.id },
@@ -126,7 +134,7 @@ const ReservationController = {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
-            reservation.createdBy = reservation.createdBy || _user.id
+            reservation.createdBy = _user.id
             const reservationdb = await Reservation.create(reservation)
                 .then(async r => {
                     const reservation = r?.toJSON() || {};
@@ -136,7 +144,11 @@ const ReservationController = {
                             {
                                 model: User,
                                 as: "CreatedBy"
-                            }
+                            },
+                            {
+                                model: User,
+                                as: "Student",
+                            },
                         ]
                     }).then(r => r.toJSON() || null)
                 });
@@ -212,8 +224,12 @@ const ReservationController = {
                 include: [
                     {
                         model: User,
-                        as: "CreatedBy"
-                    }
+                        as: "CreatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "Student",
+                    },
                 ]
             }).then(r => r?.toJSON() || null)
 
@@ -246,6 +262,10 @@ const ReservationController = {
                 include: [{
                     model: User,
                     as: "CreatedBy"
+                },
+                {
+                    model: User,
+                    as: "Student",
                 }]
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!reservationsdb && reservationsdb.length > 0 ? [reservationsdb] : [];

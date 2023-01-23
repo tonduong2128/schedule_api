@@ -65,6 +65,10 @@ const ReservationController = {
                         model: User,
                         as: "Student",
                     },
+                    {
+                        model: Vehicle_Type,
+                        as: "VehicleType",
+                    },
                 ],
                 limit,
                 offset,
@@ -91,43 +95,47 @@ const ReservationController = {
             reservation.createdBy = _user.id;
             const reservationdbOld = await Reservation.findOne({
                 where: {
-                    id: { [Op.ne]: reservation.id },
-                    [Op.or]: [
-                        { teacherId: reservation.teacherId },
-                        { createdBy: reservation.createdBy }
+                    [Op.and]: [
+                        {
+                            [Op.or]: [
+                                { teacherId: reservation.teacherId },
+                                { studentId: reservation.studentId }
+                            ]
+                        },
+                        { targetDate: reservation.targetDate },
+                        {
+                            [Op.or]: [
+                                {
+                                    startTime: {
+                                        [Op.lte]: reservation.startTime
+                                    },
+                                    endTime: {
+                                        [Op.gt]: reservation.startTime
+                                    }
+                                },
+                                {
+                                    startTime: {
+                                        [Op.lt]: reservation.endTime
+                                    },
+                                    endTime: {
+                                        [Op.gte]: reservation.endTime
+                                    }
+                                },
+                                {
+                                    startTime: {
+                                        [Op.gte]: reservation.startTime
+                                    },
+                                    endTime: {
+                                        [Op.lte]: reservation.endTime
+                                    }
+                                },
+                            ]
+                        }
                     ],
-                    targetDate: reservation.targetDate,
-                    [Op.or]: [
-                        {
-                            startTime: {
-                                [Op.lte]: reservation.startTime
-                            },
-                            endTime: {
-                                [Op.gt]: reservation.startTime
-                            }
-                        },
-                        {
-                            startTime: {
-                                [Op.lt]: reservation.endTime
-                            },
-                            endTime: {
-                                [Op.gte]: reservation.endTime
-                            }
-                        },
-                        {
-                            startTime: {
-                                [Op.gte]: reservation.startTime
-                            },
-                            endTime: {
-                                [Op.lte]: reservation.endTime
-                            }
-                        },
-
-                    ]
                 }
             })
 
-            if (reservationdbOld?.createdBy === _user.id) {
+            if (reservationdbOld?.studentId === reservation.studentId) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
             }
             if (reservationdbOld?.teacherId === reservation.teacherId) {
@@ -171,41 +179,47 @@ const ReservationController = {
             }
             const reservationdbOld = await Reservation.findOne({
                 where: {
-                    id: { [Op.ne]: reservation.id },
-                    [Op.or]: [
-                        { teacherId: reservation.teacherId },
-                        { createdBy: reservation.createdBy }
+                    [Op.and]: [
+                        {
+                            [Op.or]: [
+                                { teacherId: reservation.teacherId },
+                                { studentId: reservation.studentId }
+                            ]
+                        },
+                        { id: { [Op.ne]: reservation.id } },
+                        { targetDate: reservation.targetDate },
+                        {
+                            [Op.or]: [
+                                {
+                                    startTime: {
+                                        [Op.lte]: reservation.startTime
+                                    },
+                                    endTime: {
+                                        [Op.gt]: reservation.startTime
+                                    }
+                                },
+                                {
+                                    startTime: {
+                                        [Op.lt]: reservation.endTime
+                                    },
+                                    endTime: {
+                                        [Op.gte]: reservation.endTime
+                                    }
+                                },
+                                {
+                                    startTime: {
+                                        [Op.gte]: reservation.startTime
+                                    },
+                                    endTime: {
+                                        [Op.lte]: reservation.endTime
+                                    }
+                                },
+                            ]
+                        }
                     ],
-                    targetDate: reservation.targetDate,
-                    [Op.or]: [
-                        {
-                            startTime: {
-                                [Op.lte]: reservation.startTime
-                            },
-                            endTime: {
-                                [Op.gt]: reservation.startTime
-                            }
-                        },
-                        {
-                            startTime: {
-                                [Op.lt]: reservation.endTime
-                            },
-                            endTime: {
-                                [Op.gte]: reservation.endTime
-                            }
-                        },
-                        {
-                            startTime: {
-                                [Op.gte]: reservation.startTime
-                            },
-                            endTime: {
-                                [Op.lte]: reservation.endTime
-                            }
-                        },
-                    ]
                 }
             })
-            if (reservationdbOld?.createdBy === _user.id) {
+            if (reservationdbOld?.studentId === reservation.studentId) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
             }
             if (reservationdbOld?.teacherId === reservation.teacherId) {

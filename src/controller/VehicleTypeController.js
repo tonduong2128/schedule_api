@@ -1,14 +1,28 @@
 
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
-import { Vehicle_Type } from "../db/model/index.js";
+import { User, Vehicle_Type } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const VehicleTypeController = {
     async getById(req, res, next) {
         try {
             const { id } = req.params
             const vehicleTypedb = await Vehicle_Type.findOne({
-                where: { id }
+                where: { id },
+                include: [
+                    {
+                        model: User,
+                        as: "Teacher"
+                    },
+                    {
+                        model: User,
+                        as: "CreatedBy"
+                    },
+                    {
+                        model: User,
+                        as: "UpdatedBy"
+                    }
+                ]
             }).then(r => r?.toJSON() || null)
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
@@ -31,6 +45,20 @@ const VehicleTypeController = {
                 where: {
                     ...searchModel
                 },
+                include: [
+                    {
+                        model: User,
+                        as: "Teacher"
+                    },
+                    {
+                        model: User,
+                        as: "CreatedBy"
+                    },
+                    {
+                        model: User,
+                        as: "UpdatedBy"
+                    }
+                ],
                 limit,
                 offset,
                 order,
@@ -49,7 +77,7 @@ const VehicleTypeController = {
             const { _user } = res.locals
             const { body } = req;
             const { vehicleType } = body;
-            vehicleType.createdBy = vehicleType.createdBy || _user.id
+            vehicleType.createdBy = _user.id
             const vehicleTypedb = await Vehicle_Type.create(vehicleType).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))

@@ -47,6 +47,18 @@ Reservation.belongsTo(Vehicle_Type, {
     foreignKey: "vehicleTypeId",
     as: "VehicleType",
 })
+Vehicle_Type.belongsTo(User, {
+    foreignKey: "teacherId",
+    as: "Teacher",
+})
+Vehicle_Type.belongsTo(User, {
+    foreignKey: "createdBy",
+    as: "CreatedBy",
+})
+Vehicle_Type.belongsTo(User, {
+    foreignKey: "updatedBy",
+    as: "UpdatedBy",
+})
 export {
     User,
     Role,

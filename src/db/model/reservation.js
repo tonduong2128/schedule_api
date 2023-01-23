@@ -24,6 +24,10 @@ const Reservation = sequelize.define('reservation', {
         type: DataTypes.BIGINT,
         allowNull: false
     },
+    studentId: {
+        type: DataTypes.BIGINT,
+        allowNull: false
+    },
     status: DataTypes.INTEGER,
 
     createdBy: {

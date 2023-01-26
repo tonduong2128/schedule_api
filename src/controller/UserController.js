@@ -23,6 +23,14 @@ const UserComtroller = {
                         model: Student_Teacher,
                         as: "Students_Teacher",
                     },
+                    {
+                        model: User,
+                        as: "CreatedBy",
+                    },
+                    {
+                        model: User,
+                        as: "UpdatedBy"
+                    }
                 ]
             }).then(r => r?.toJSON() || null)
             const records = !!userdb ? [userdb] : [];
@@ -42,7 +50,7 @@ const UserComtroller = {
             const offset = (page - 1) * limit;
             const order = []
 
-            const { teacher, student, teacherId, studentId } = searchOther;
+            const { teacher, student, teacherId, studentId, admin } = searchOther;
             let queryIncludes = []
             if (teacher) {
                 queryIncludes.push({
@@ -85,6 +93,17 @@ const UserComtroller = {
                     where: {
                         studentId: studentId
                     },
+                })
+            }
+            if (admin) {
+                queryIncludes.push({
+                    model: Role,
+                    as: "Roles",
+                    where: {
+                        id: {
+                            [Op.or]: [ROLE.teacher, ROLE.admin, ROLE.teacher_vip]
+                        }
+                    }
                 })
             }
             const result = await User.findAndCountAll({

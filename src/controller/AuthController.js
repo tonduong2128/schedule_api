@@ -67,6 +67,8 @@ const AuthController = {
             }
             await userdb.update({
                 password: PASSWORD_DEFAULT,
+                updatedBy: _user.id,
+                updatedDate: moment()
             })
             res.json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
@@ -137,10 +139,13 @@ const AuthController = {
                     });
                     if (sms_recorddb_2) {
                         sms_recorddb_2.update({
-                            used: true
+                            used: true,
+                            updatedDate: moment(),
                         })
                         await userdb.update({
                             password,
+                            updatedBy: userdb.id,
+                            updatedDate: moment(),
                         })
                         return res.json(response(res, RESPONSE_CODE.SUCCESS))
                     } else {
@@ -163,7 +168,9 @@ const AuthController = {
             const matchPassword = bcrypt.compare(oldPassword, user.password);
             if (matchPassword) {
                 await user.update({
-                    passowrd: newPassword
+                    passowrd: newPassword,
+                    updatedBy: _user.id,
+                    updatedDate: moment(),
                 })
                 res.json(response(res, RESPONSE_CODE.SUCCESS))
             } else {

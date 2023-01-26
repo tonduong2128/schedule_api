@@ -1,4 +1,5 @@
 
+import moment from "moment";
 import { Op } from "sequelize";
 import { RESPONSE_CODE } from "../constant/index.js";
 import { Reservation, User, Vehicle_Type } from "../db/model/index.js";
@@ -246,6 +247,7 @@ const ReservationController = {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
             reservation.updatedBy = _user.id;
+            reservation.updatedDate = moment()
             const reservationIddb = await Reservation.update(reservation, {
                 where: {
                     id: reservation.id || 0
@@ -292,6 +294,7 @@ const ReservationController = {
             const { body } = req;
             const { reservationIds, reservationUpdates } = body;
             reservationUpdates.updatedBy = _user.id;
+            reservationUpdates.updatedDate = moment()
             const reservationIddb = await Reservation.update(reservationUpdates, {
                 where: {
                     id: {

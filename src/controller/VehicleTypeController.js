@@ -92,6 +92,7 @@ const VehicleTypeController = {
             const { body } = req;
             const { vehicleType } = body;
             vehicleType.updatedBy = _user.id;
+            vehicleType.updatedDate = moment()
             const vehicleTypeIddb = await Vehicle_Type.update(vehicleType, {
                 where: {
                     [Op.or]: [
@@ -117,6 +118,7 @@ const VehicleTypeController = {
             const { body } = req;
             const { vehicleTypeIds, vehicleTypeUpdates } = body;
             vehicleTypeUpdates.updatedBy = _user.id
+            vehicleTypeUpdates.updatedDate = moment()
             const vehicleTypesIddb = await Vehicle_Type.update(vehicleTypeUpdates, {
                 where: {
                     id: {

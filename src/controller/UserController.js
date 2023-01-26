@@ -145,6 +145,7 @@ const UserComtroller = {
             delete user.username;
             delete user.password;
             user.updatedBy = _user.id;
+            user.updatedDate = moment()
             const userIddb = await User.update(user, {
                 where: {
                     [Op.or]: [
@@ -170,6 +171,7 @@ const UserComtroller = {
             const { body } = req;
             const { userIds, userUpdates } = body;
             userUpdates.updatedBy = _user.id;
+            userUpdates.updatedDate = moment()
             const usersIddb = await User.update(userUpdates, {
                 where: {
                     id: {

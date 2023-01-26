@@ -64,6 +64,7 @@ const RoleController = {
             const { body } = req;
             const { roleType } = body;
             roleType.updatedBy = _user.id
+            roleType.updatedDate = moment()
             const roleIddb = await Role.update(roleType, {
                 where: {
                     [Op.or]: [
@@ -89,6 +90,7 @@ const RoleController = {
             const { body } = req;
             const { roleIds, roleUpdates } = body;
             roleUpdates.updatedBy = _user.id
+            roleUpdates.updatedDate = moment()
             const rolesIddb = await Role.update(roleUpdates, {
                 where: {
                     id: {

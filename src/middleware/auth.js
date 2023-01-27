@@ -15,6 +15,7 @@ const auth = async (req, res, next) => {
         const userdb = await User.findOne({
             where: {
                 id: _user.id,
+                username: _user.username,
             },
             include: [
                 {

@@ -4,6 +4,7 @@ import Student_Teacher from './student_teacher.js';
 import User from './user.js';
 import User_Role from './user_role.js';
 import Vehicle_Type from './vehicle_type.js';
+import Teacher_Hour from './teacher_hour.js';
 
 User.belongsToMany(Role, { through: 'user_role', as: "Roles", foreignKey: "userId", timestamps: false });
 Role.belongsToMany(User, { through: 'user_role', as: "Users", foreignKey: "roleId", timestamps: false });
@@ -65,5 +66,6 @@ export {
     Reservation,
     User_Role,
     Vehicle_Type,
-    Student_Teacher
+    Student_Teacher,
+    Teacher_Hour
 }

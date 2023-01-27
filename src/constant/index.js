@@ -34,8 +34,30 @@ const STATUS_RESERVATION = {
     new: 1,
     approval: 2,
     reject: 3,
+    ofWeek: 4,
+    special: 5,
+}
+
+const TYPEOF_SPECIFIC_SCHEDULE = {
+    BUSY: 0,
+    UNBUSY: 1
+}
+
+const SPECIFIC_SCHEDULE = {
+    enable: 1,
+    disable: 0,
 }
 
 const PASSWORD_DEFAULT = "123456";
 
-export { RESPONSE_CODE, SALT_ROUNDS, PER_PAGE, ROLE, STATUS_USER, STATUS_RESERVATION, PASSWORD_DEFAULT }
+export {
+    RESPONSE_CODE,
+    SALT_ROUNDS,
+    PER_PAGE,
+    ROLE,
+    STATUS_USER,
+    STATUS_RESERVATION,
+    PASSWORD_DEFAULT,
+    TYPEOF_SPECIFIC_SCHEDULE,
+    SPECIFIC_SCHEDULE
+}

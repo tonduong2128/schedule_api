@@ -1,8 +1,9 @@
 
 import moment from "moment";
 import { Op } from "sequelize";
-import { RESPONSE_CODE } from "../constant/index.js";
+import { RESPONSE_CODE, SPECIFIC_SCHEDULE, STATUS_RESERVATION, TYPEOF_SPECIFIC_SCHEDULE } from "../constant/index.js";
 import { Reservation, User, Vehicle_Type } from "../db/model/index.js";
+import TeacherHour from "../db/model/teacher_hour.js";
 import { response } from "../util/index.js";
 const ReservationController = {
     async getById(req, res, next) {
@@ -53,6 +54,60 @@ const ReservationController = {
             const offset = (page - 1) * limit;
             const order = []
 
+            let beforeRecord = []
+            if (searchModel.teacherId && searchModel.targetDate.$between) {
+                const start = searchModel.targetDate.$between[0]
+                const end = searchModel.targetDate.$between[1]
+
+                const teacherHour = await TeacherHour.findOne({
+                    where: {
+                        createdBy: searchModel.teacherId,
+                        status: SPECIFIC_SCHEDULE.enable,
+                    }
+                })
+                if (teacherHour) {
+                    const hours = JSON.parse(teacherHour.hours)
+                    const typeOfSchedule = teacherHour.typeOf;
+                    for (const curDate = moment(start); curDate.isSameOrBefore(moment(end)); curDate.add(1, "day")) {
+                        let hour = hours[curDate.day()]
+                        const [teacher] = await Promise.all([
+                            User.findOne({ where: { id: searchModel.teacherId } }).then(r => r.toJSON())
+                        ])
+                        if (typeOfSchedule === TYPEOF_SPECIFIC_SCHEDULE.BUSY) {
+                            beforeRecord.push(...hour.map(h => ({
+                                id: 0,
+                                targetDate: curDate.format("YYYY-MM-DD"),
+                                startTime: h.startTime,
+                                endTime: h.endTime,
+                                vehicleTypeId: null,
+                                status: STATUS_RESERVATION.ofWeek,
+                                reason: h.reason,
+
+                                studentId: searchModel.teacherId,
+                                Student: teacher,
+
+                                teacherId: searchModel.teacherId,
+                                Teacher: teacher,
+
+                                createdBy: teacherHour.createdBy,
+                                CreatedBy: teacherHour.createdBy ? teacher : undefined,
+
+                                updatedBy: teacherHour.updatedBy,
+                                UpdatedBy: teacherHour.updatedBy ? teacher : undefined,
+
+                                createdDate: teacherHour.createdDate,
+                                updatedDate: teacherHour.updatedDate,
+                            })))
+                        } else {
+                            hour = hour.sort((a, b) => a.startTime < b.endTime)
+                            for (let index = 0; index < hour.length - 1; index++) {
+                                const value = array[index];
+                            }
+                        }
+                    }
+                }
+            }
+
             const result = await Reservation.findAndCountAll({
                 where: {
                     ...searchModel
@@ -86,7 +141,7 @@ const ReservationController = {
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
+            res.json(response(res, RESPONSE_CODE.SUCCESS, [...records, ...beforeRecord], count, limit, page, page_count))
         } catch (error) {
             console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))

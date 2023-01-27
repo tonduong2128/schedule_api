@@ -141,6 +141,14 @@ const UserComtroller = {
             const { body } = req;
             const { user } = body;
             user.createdBy = user.createdBy || _user.id
+            const userOld = await User.findOne({
+                where: {
+                    username: user.username
+                }
+            })
+            if (userOld) {
+                return res.json(response(res, RESPONSE_CODE.USERNAME_HAD_USED, records))
+            }
             const userdb = await User.create(user, {
                 include: [{
                     model: User_Role,
@@ -162,8 +170,8 @@ const UserComtroller = {
             const { _user } = res.locals;
             const { body } = req;
             const { user } = body;
-            delete user.username;
             delete user.password;
+            delete user.username;
             user.updatedBy = _user.id;
             user.updatedDate = moment()
             const userIddb = await User.update(user, {
@@ -190,6 +198,9 @@ const UserComtroller = {
             const { _user } = res.locals;
             const { body } = req;
             const { userIds, userUpdates } = body;
+            delete userUpdates.password;
+            delete userUpdates.username;
+
             userUpdates.updatedBy = _user.id;
             userUpdates.updatedDate = moment()
             const usersIddb = await User.update(userUpdates, {

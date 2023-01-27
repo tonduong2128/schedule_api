@@ -35,7 +35,7 @@ const auth = async (req, res, next) => {
         if (userdb.status === STATUS_USER.exprid) {
             return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
         }
-        const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+        const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: "7d" });
         res.locals._user = userdb;
         res.locals.token = newToken;
         next()

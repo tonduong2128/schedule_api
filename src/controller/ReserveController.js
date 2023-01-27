@@ -1,4 +1,5 @@
 
+import e from "cors";
 import moment from "moment";
 import { Op } from "sequelize";
 import { RESPONSE_CODE, SPECIFIC_SCHEDULE, STATUS_RESERVATION, TYPEOF_SPECIFIC_SCHEDULE } from "../constant/index.js";
@@ -68,42 +69,63 @@ const ReservationController = {
                 if (teacherHour) {
                     const hours = JSON.parse(teacherHour.hours)
                     const typeOfSchedule = teacherHour.typeOf;
+                    const [teacher] = await Promise.all([
+                        User.findOne({ where: { id: searchModel.teacherId } }).then(r => r.toJSON())
+                    ])
                     for (const curDate = moment(start); curDate.isSameOrBefore(moment(end)); curDate.add(1, "day")) {
+                        if (curDate.isBefore(moment(moment().format("YYYY-MM-DD")))) { continue }
                         let hour = hours[curDate.day()]
-                        const [teacher] = await Promise.all([
-                            User.findOne({ where: { id: searchModel.teacherId } }).then(r => r.toJSON())
-                        ])
                         if (typeOfSchedule === TYPEOF_SPECIFIC_SCHEDULE.BUSY) {
-                            beforeRecord.push(...hour.map(h => ({
-                                id: 0,
-                                targetDate: curDate.format("YYYY-MM-DD"),
-                                startTime: h.startTime,
-                                endTime: h.endTime,
-                                vehicleTypeId: null,
-                                status: STATUS_RESERVATION.ofWeek,
-                                reason: h.reason,
-
-                                studentId: searchModel.teacherId,
-                                Student: teacher,
-
-                                teacherId: searchModel.teacherId,
-                                Teacher: teacher,
-
-                                createdBy: teacherHour.createdBy,
-                                CreatedBy: teacherHour.createdBy ? teacher : undefined,
-
-                                updatedBy: teacherHour.updatedBy,
-                                UpdatedBy: teacherHour.updatedBy ? teacher : undefined,
-
-                                createdDate: teacherHour.createdDate,
-                                updatedDate: teacherHour.updatedDate,
-                            })))
+                            //donothing
                         } else {
-                            hour = hour.sort((a, b) => a.startTime < b.endTime)
-                            for (let index = 0; index < hour.length - 1; index++) {
-                                const value = array[index];
-                            }
+                            let busys = [{
+                                startTime: "00:00:00",
+                                endTime: "23:59:59",
+                                reason: ""
+                            }]
+                            hour.forEach(h => {
+                                const index = busys.findIndex(bs => h.startTime >= bs.startTime && h.endTime <= bs.endTime)
+                                const itemDelete = busys[index];
+                                busys.splice(index, 1,
+                                    {
+                                        startTime: itemDelete.startTime,
+                                        endTime: h.startTime,
+                                        reason: h.reason
+                                    },
+                                    {
+                                        startTime: h.endTime,
+                                        endTime: itemDelete.endTime,
+                                        reason: h.reason
+                                    }
+                                )
+                            })
+                            hour = busys;
                         }
+                        beforeRecord.push(...hour.map(h => ({
+                            id: 0,
+                            targetDate: curDate.format("YYYY-MM-DD"),
+                            startTime: h.startTime,
+                            endTime: h.endTime,
+                            vehicleTypeId: null,
+                            status: STATUS_RESERVATION.ofWeek,
+                            reason: h.reason,
+
+                            studentId: searchModel.teacherId,
+                            Student: teacher,
+
+                            teacherId: searchModel.teacherId,
+                            Teacher: teacher,
+
+                            createdBy: teacherHour.createdBy,
+                            CreatedBy: teacherHour.createdBy ? teacher : undefined,
+
+                            updatedBy: teacherHour.updatedBy,
+                            UpdatedBy: teacherHour.updatedBy ? teacher : undefined,
+
+                            createdDate: teacherHour.createdDate,
+                            updatedDate: teacherHour.updatedDate,
+                        })))
+
                     }
                 }
             }
@@ -156,6 +178,11 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
+
+            if (!(await checkBeforCreateOrUpdate(reservation))) {
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
+            }
+
             reservation.createdBy = _user.id;
             const reservationdbOld = await Reservation.findOne({
                 where: {
@@ -253,6 +280,11 @@ const ReservationController = {
             if (!timeValid) {
                 return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
+
+            if (!(await checkBeforCreateOrUpdate(reservation))) {
+                return res.json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
+            }
+
             const reservationdbOld = await Reservation.findOne({
                 where: {
                     [Op.and]: [
@@ -408,6 +440,26 @@ const ReservationController = {
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
+}
+const checkBeforCreateOrUpdate = async (reservation) => {
+    const teacherHour = await TeacherHour.findOne({
+        where: {
+            createdBy: reservation.teacherId,
+            status: SPECIFIC_SCHEDULE.enable,
+        }
+    })
+    if (teacherHour) {
+        const hours = JSON.parse(teacherHour.hours)
+        const typeOfSchedule = teacherHour.typeOf;
+        const date = moment(reservation.targetDate, "YYYY-MM-DD")
+        const hour = hours[date.day()]
+        if (typeOfSchedule === TYPEOF_SPECIFIC_SCHEDULE.BUSY) {
+            return !hour.some(h => !(reservation.startTime >= h.endTime || reservation.endTime <= h.startTime))
+        } else {
+            return hour.some(h => reservation.startTime >= h.startTime && reservation.endTime <= h.endTime)
+        }
+    }
+    return true
 }
 
 export default ReservationController

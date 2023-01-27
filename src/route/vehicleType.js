@@ -1,12 +1,12 @@
 import express from "express";
 import { VehicleTypeController } from "../controller/index.js";
-const VehicleRouter = express.Router();
+const VehicleRoute = express.Router();
 
-VehicleRouter.get("/:id", VehicleTypeController.getById)
-VehicleRouter.get("/", VehicleTypeController.search)
-VehicleRouter.post("/", VehicleTypeController.create)
-VehicleRouter.patch("/", VehicleTypeController.update)
-VehicleRouter.patch("/many", VehicleTypeController.updateMany)
-VehicleRouter.delete("/", VehicleTypeController.delete)
+VehicleRoute.get("/:id", VehicleTypeController.getById)
+VehicleRoute.get("/", VehicleTypeController.search)
+VehicleRoute.post("/", VehicleTypeController.create)
+VehicleRoute.patch("/", VehicleTypeController.update)
+VehicleRoute.patch("/many", VehicleTypeController.updateMany)
+VehicleRoute.delete("/", VehicleTypeController.delete)
 
-export default VehicleRouter
+export default VehicleRoute

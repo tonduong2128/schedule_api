@@ -1,11 +1,11 @@
 import express from "express";
 import { AuthController } from "../controller/index.js";
 import auth from "../middleware/auth.js";
-const AuthRouter = express.Router();
+const AuthRoute = express.Router();
 
-AuthRouter.post("/login", AuthController.login)
-AuthRouter.post("/reset", AuthController.reset)
-AuthRouter.post("/change-password", auth, AuthController.changePassword)
-AuthRouter.post("/reset-force", auth, AuthController.resetForce)
+AuthRoute.post("/login", AuthController.login)
+AuthRoute.post("/reset", AuthController.reset)
+AuthRoute.post("/change-password", auth, AuthController.changePassword)
+AuthRoute.post("/reset-force", auth, AuthController.resetForce)
 
-export default AuthRouter
+export default AuthRoute

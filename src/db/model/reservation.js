@@ -5,7 +5,6 @@ import sequelize from "../index.js";
 const Reservation = sequelize.define('reservation', {
     vehicleTypeId: {
         type: DataTypes.INTEGER,
-        allowNull: false
     },
     targetDate: {
         type: DataTypes.DATEONLY,

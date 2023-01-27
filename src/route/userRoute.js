@@ -1,12 +1,12 @@
 import express from "express";
 import { UserController } from "../controller/index.js";
-const UserRouter = express.Router();
+const UserRoute = express.Router();
 
-UserRouter.get("/:id", UserController.getById)
-UserRouter.get("/", UserController.search)
-UserRouter.post("/", UserController.create)
-UserRouter.patch("/", UserController.update)
-UserRouter.patch("/many", UserController.updateMany)
-UserRouter.delete("/", UserController.delete)
+UserRoute.get("/:id", UserController.getById)
+UserRoute.get("/", UserController.search)
+UserRoute.post("/", UserController.create)
+UserRoute.patch("/", UserController.update)
+UserRoute.patch("/many", UserController.updateMany)
+UserRoute.delete("/", UserController.delete)
 
-export default UserRouter
+export default UserRoute

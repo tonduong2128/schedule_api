@@ -69,7 +69,7 @@ const ReservationController = {
                     const hours = JSON.parse(teacherHour.hours)
                     const typeOfSchedule = teacherHour.typeOf;
                     for (const curDate = moment(start); curDate.isSameOrBefore(moment(end)); curDate.add(1, "day")) {
-                        const hour = hours[curDate.day()]
+                        let hour = hours[curDate.day()]
                         const [teacher] = await Promise.all([
                             User.findOne({ where: { id: searchModel.teacherId } }).then(r => r.toJSON())
                         ])
@@ -79,7 +79,7 @@ const ReservationController = {
                                 targetDate: curDate.format("YYYY-MM-DD"),
                                 startTime: h.startTime,
                                 endTime: h.endTime,
-                                vehicleTypeId: 0,
+                                vehicleTypeId: null,
                                 status: STATUS_RESERVATION.ofWeek,
                                 reason: h.reason,
 
@@ -99,7 +99,10 @@ const ReservationController = {
                                 updatedDate: teacherHour.updatedDate,
                             })))
                         } else {
-
+                            hour = hour.sort((a, b) => a.startTime < b.endTime)
+                            for (let index = 0; index < hour.length - 1; index++) {
+                                const value = array[index];
+                            }
                         }
                     }
                 }

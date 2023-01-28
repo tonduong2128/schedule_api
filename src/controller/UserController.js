@@ -147,7 +147,7 @@ const UserComtroller = {
                 }
             })
             if (userOld) {
-                return res.json(response(res, RESPONSE_CODE.USERNAME_HAD_USED, records))
+                return res.json(response(res, RESPONSE_CODE.USERNAME_HAD_USED))
             }
             const userdb = await User.create(user, {
                 include: [{

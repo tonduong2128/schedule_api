@@ -25,6 +25,11 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  dateExpired: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+
   nickname: DataTypes.STRING,
   email: DataTypes.STRING,
 

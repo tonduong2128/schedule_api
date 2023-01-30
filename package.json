@@ -21,6 +21,7 @@
     "moment": "^2.29.4",
     "mysql2": "^2.3.3",
     "nexmo": "^2.9.1",
+    "node-cron": "^3.0.2",
     "nodemailer": "^6.9.0",
     "public-ip": "^6.0.1",
     "sequelize": "^6.28.0"

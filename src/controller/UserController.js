@@ -1,7 +1,7 @@
 
 import moment from "moment";
 import { Op } from "sequelize";
-import { RESPONSE_CODE, ROLE } from "../constant/index.js";
+import { RESPONSE_CODE, ROLE, STATUS_RESERVATION, STATUS_USER } from "../constant/index.js";
 import { Role, Student_Teacher, User, User_Role } from "../db/model/index.js";
 import { response } from "../util/index.js";
 const UserComtroller = {
@@ -146,9 +146,21 @@ const UserComtroller = {
                     username: user.username
                 }
             })
+
+            //updated date expired if is student 
+            if (user?.User_Roles?.[0].roleId === ROLE.student && user?.Students_Teacher?.[0]?.teacherId) {
+                const teacher = await User.findOne({
+                    where: {
+                        id: user?.Students_Teacher?.[0]?.teacherId
+                    }
+                })
+                user.dateExpired = teacher.dateExpired;
+            }
+
             if (userOld) {
                 return res.json(response(res, RESPONSE_CODE.USERNAME_HAD_USED))
             }
+
             const userdb = await User.create(user, {
                 include: [{
                     model: User_Role,
@@ -174,7 +186,26 @@ const UserComtroller = {
             delete user.username;
             user.updatedBy = _user.id;
             user.updatedDate = moment()
-            const userIddb = await User.update(user, {
+
+            //find user is teacher
+            const teacherdbOld = await User.findOne({
+                where: {
+                    id: user.id || 0,
+                },
+                include: [
+                    {
+                        model: Role,
+                        as: "Roles",
+                        where: {
+                            id: { [Op.in]: [ROLE.teacher, ROLE.teacher_vip] }
+                        },
+                    },
+                ]
+            }).then(r => r?.toJSON() || null)
+
+            const userIddb = await User.update({
+                ...user,
+            }, {
                 where: {
                     [Op.or]: [
                         { id: user.id || 0 },
@@ -186,6 +217,12 @@ const UserComtroller = {
                     id: user.id || 0,
                 }
             }).then(r => r?.toJSON() || null)
+
+            //updated date expired for student if user updated is teacher
+            if (teacherdbOld?.dateExpired !== userdb.dateExpired
+                || teacherdbOld?.status !== userdb?.status) {
+                await UpdateStudentExpired(user.id, userdb.dateExpired, userdb?.status);
+            }
             const records = !!userdb ? [userdb] : [];
             res.json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
@@ -246,6 +283,32 @@ const UserComtroller = {
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
+}
+
+const UpdateStudentExpired = async (teacherId, dateExpired, status) => {
+    const students = await User.findAll({
+        where: {
+        },
+        include: [{
+            model: Role,
+            as: "Roles",
+            where: {
+                id: ROLE.student
+            },
+        }, {
+            model: Student_Teacher,
+            as: "Students_Teacher",
+            where: {
+                teacherId: teacherId
+            },
+        }]
+    })
+    students.forEach(async student => {
+        await student.update({
+            status: status,
+            dateExpired: dateExpired,
+        })
+    })
 }
 
 export default UserComtroller

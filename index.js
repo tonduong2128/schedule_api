@@ -2,6 +2,9 @@ import express from 'express'
 import route from './src/route/index.js';
 import dotenv from "dotenv";
 import cors from 'cors'
+import cron from 'node-cron'
+import CheckUserExpired from './src/function/CheckUserExpired.js';
+
 if (process.env.NODE_ENV == "production") {
   dotenv.config({ path: ".env.production" });
 } else {
@@ -25,8 +28,13 @@ app.use(express.json());
 
 route(app);
 
+
 app.get('/', function (req, res) {
   res.sendStatus(404)
+})
+
+cron.schedule("0 0 0 * * *", async () => {
+  await CheckUserExpired();
 })
 
 app.listen(process.env.PORT || 3000, () => {

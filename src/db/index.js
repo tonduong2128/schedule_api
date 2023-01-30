@@ -15,7 +15,9 @@ const sequelize = new Sequelize(
             $ne: Op.ne,
             $and: Op.and,
             $like: Op.like,
-            $between: Op.between
+            $between: Op.between,
+            $gte: Op.gte,
+            $lte: Op.lte,
         }
     }
 )

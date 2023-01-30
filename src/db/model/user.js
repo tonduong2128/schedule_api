@@ -30,7 +30,6 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 
-  nickname: DataTypes.STRING,
   email: DataTypes.STRING,
 
   status: {

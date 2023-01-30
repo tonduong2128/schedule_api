@@ -47,9 +47,6 @@ const AuthController = {
                 res.json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
-            const ip = await publicIpv4().then(ip => ip);
-            console.log("IP: " + ip);
-            console.log(error);
             res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },

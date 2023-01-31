@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
   res.sendStatus(404)
 })
 
-cron.schedule("0 0 0 * * *", async () => {
+cron.schedule("0 0 1 * * *", async () => {
   await CheckUserExpired();
 })
 

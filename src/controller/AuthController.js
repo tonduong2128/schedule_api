@@ -34,12 +34,13 @@ const AuthController = {
                     },
                 ]
             }).then(r => r?.toJSON() || null)
+            const roleIds = userdb.Roles.map(r => r.id);
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {
-                if (userdb.status === STATUS_USER.exprid) {
+                if (userdb.status === STATUS_USER.exprid || (!roleIds.includes(ROLE.admin) && userdb.dateExpired < moment().format("YYYY-MM-DD"))) {
                     return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
                 }
-                const token = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: 60 * 60 });
+                const token = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: "7d" });
                 const newResponse = response(res, RESPONSE_CODE.SUCCESS);
                 newResponse.token = token
                 res.json(newResponse);

@@ -37,11 +37,6 @@ const AuthController = {
             const roleIds = userdb.Roles.map(r => r.id);
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {
-                console.log(userdb.status);
-                console.log(roleIds);
-                console.log(userdb.dateExpired);
-                console.log(moment().format("YYYY-MM-DD"));
-
                 if (userdb.status === STATUS_USER.exprid || (!roleIds.includes(ROLE.admin) && userdb.dateExpired < moment().format("YYYY-MM-DD"))) {
                     return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
                 }

@@ -20,6 +20,10 @@ const UserComtroller = {
                         as: "User_Roles",
                     },
                     {
+                        model: Role,
+                        as: "Roles",
+                    },
+                    {
                         model: Student_Teacher,
                         as: "Students_Teacher",
                     },

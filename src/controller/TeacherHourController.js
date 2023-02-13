@@ -14,10 +14,10 @@ const TeacherHourController = {
                 ]
             }).then(r => r?.toJSON() || null)
             const records = !!teacherHourdb ? [teacherHourdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -44,10 +44,10 @@ const TeacherHourController = {
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
@@ -58,10 +58,10 @@ const TeacherHourController = {
             teacherHour.createdBy = _user.id
             const teacherHourdb = await Teacher_Hour.create(teacherHour).then(r => r?.toJSON() || null);
             const records = !!teacherHourdb ? [teacherHourdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -84,10 +84,10 @@ const TeacherHourController = {
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!teacherHourdb ? [teacherHourdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -112,10 +112,10 @@ const TeacherHourController = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!teacherHourIdsdb && teacherHourIdsdb.length > 0 ? [teacherHourIdsdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -129,10 +129,10 @@ const TeacherHourController = {
                     }
                 }
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }

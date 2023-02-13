@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == "production") {
 const app = express()
 app.use(cors({
   origin: '*',
-  credentials: true,            //access-control-allow-credentials:true
+  credentials: true,
   optionSuccessStatus: 200,
 }))
 app.use(express.urlencoded({ extended: false }));

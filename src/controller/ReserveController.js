@@ -36,10 +36,10 @@ const ReservationController = {
                 ]
             }).then(r => r?.toJSON() || null)
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -163,10 +163,10 @@ const ReservationController = {
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
-            res.json(response(res, RESPONSE_CODE.SUCCESS, [...records, ...beforeRecord], count, limit, page, page_count))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, [...records, ...beforeRecord], count, limit, page, page_count))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
@@ -176,11 +176,11 @@ const ReservationController = {
             const { reservation } = body;
             const timeValid = reservation.startTime < reservation.endTime;
             if (!timeValid) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
 
             if (!(await checkBeforCreateOrUpdate(reservation))) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
             }
 
             reservation.createdBy = _user.id;
@@ -227,10 +227,10 @@ const ReservationController = {
             })
 
             if (reservationdbOld?.studentId === reservation.studentId) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
             }
             if (reservationdbOld?.teacherId === reservation.teacherId) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
 
             reservation.createdBy = _user.id
@@ -264,10 +264,10 @@ const ReservationController = {
                     }).then(r => r.toJSON() || null)
                 });
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -278,11 +278,11 @@ const ReservationController = {
 
             const timeValid = reservation.startTime < reservation.endTime;
             if (!timeValid) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_TIME_NOT_VALID))
             }
 
             if (!(await checkBeforCreateOrUpdate(reservation))) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_BUSY, []))
             }
 
             const reservationdbOld = await Reservation.findOne({
@@ -328,10 +328,10 @@ const ReservationController = {
                 }
             })
             if (reservationdbOld?.studentId === reservation.studentId) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_EXISTS_USER, []))
             }
             if (reservationdbOld?.teacherId === reservation.teacherId) {
-                return res.json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
+                return res.status(200).json(response(res, RESPONSE_CODE.RESERVATION_EXISTS, []))
             }
             reservation.updatedBy = _user.id;
             reservation.updatedDate = moment()
@@ -369,10 +369,10 @@ const ReservationController = {
             }).then(r => r?.toJSON() || null)
 
             const records = !!reservationdb ? [reservationdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -417,10 +417,10 @@ const ReservationController = {
                 }]
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!reservationsdb && reservationsdb.length > 0 ? [reservationsdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -434,10 +434,10 @@ const ReservationController = {
                     }
                 }
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }

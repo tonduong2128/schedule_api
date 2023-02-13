@@ -26,10 +26,10 @@ const VehicleTypeController = {
                 ]
             }).then(r => r?.toJSON() || null)
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -67,10 +67,10 @@ const VehicleTypeController = {
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
@@ -81,10 +81,10 @@ const VehicleTypeController = {
             vehicleType.createdBy = _user.id
             const vehicleTypedb = await Vehicle_Type.create(vehicleType).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -107,10 +107,10 @@ const VehicleTypeController = {
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -135,10 +135,10 @@ const VehicleTypeController = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!vehicleTypeIdsdb && vehicleTypeIdsdb.length > 0 ? [vehicleTypeIdsdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -152,10 +152,10 @@ const VehicleTypeController = {
                     }
                 }
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }

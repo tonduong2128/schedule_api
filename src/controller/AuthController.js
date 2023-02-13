@@ -38,17 +38,17 @@ const AuthController = {
             const matchPassword = bcrypt.compare(user.password, userdb.password)
             if (matchPassword) {
                 if (userdb.status === STATUS_USER.exprid || (!roleIds.includes(ROLE.admin) && userdb.dateExpired < moment().format("YYYY-MM-DD"))) {
-                    return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
+                    return res.status(200).json(response(res, RESPONSE_CODE.USER_EXPIRED))
                 }
                 const token = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: "7d" });
                 const newResponse = response(res, RESPONSE_CODE.SUCCESS);
                 newResponse.token = token
-                res.json(newResponse);
+                res.status(200).json(newResponse);
             } else {
-                res.json(response(res, RESPONSE_CODE.ERROR))
+                res.status(200).json(response(res, RESPONSE_CODE.ERROR))
             }
         } catch (error) {
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async resetForce(req, res, next) {
@@ -61,17 +61,17 @@ const AuthController = {
                 }
             })
             if (!_user && !userdb && !_user.Roles.some(r => r.id === ROLE.admin || r.id === ROLE.teacher || r.id === ROLE.teacher_vip)) {
-                res.json(response(res, RESPONSE_CODE.NO_PERMISSION))
+                res.status(200).json(response(res, RESPONSE_CODE.NO_PERMISSION))
             }
             await userdb.update({
                 password: PASSWORD_DEFAULT,
                 updatedBy: _user.id,
                 updatedDate: moment()
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async reset(req, res, next) {
@@ -88,7 +88,7 @@ const AuthController = {
                 }
             })
             if (!userdb) {
-                return res.json(response(res, RESPONSE_CODE.USERNAME_OR_PASSWORD_NOT_MATCH))
+                return res.status(200).json(response(res, RESPONSE_CODE.USERNAME_OR_PASSWORD_NOT_MATCH))
             }
             if (!optCode) {
                 const code = randomCode(5);
@@ -103,7 +103,7 @@ const AuthController = {
                     "Lấy lại mật khẩu",
                     `Mã của bạn là: ${code} \n Mã sẽ hết hạn sau: ${process.env.OTP_EXPRID} phút.`);
                 if (!!sms_recorddb && !!mail_send) {
-                    return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                    return res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
                 } else {
                     throw Error("Cannot create sms record")
                 }
@@ -123,7 +123,7 @@ const AuthController = {
                     await sms_recorddb.update({
                         updatedBy: userdb.id
                     });
-                    return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                    return res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
                 } else {
                     const sms_recorddb_2 = await Otp_Record.findOne({
                         where: {
@@ -145,7 +145,7 @@ const AuthController = {
                             updatedBy: userdb.id,
                             updatedDate: moment(),
                         })
-                        return res.json(response(res, RESPONSE_CODE.SUCCESS))
+                        return res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
                     } else {
                         throw Error("Opt exprid")
                     }
@@ -153,7 +153,7 @@ const AuthController = {
             }
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async changePassword(req, res, next) {
@@ -170,13 +170,13 @@ const AuthController = {
                     updatedBy: _user.id,
                     updatedDate: moment(),
                 })
-                res.json(response(res, RESPONSE_CODE.SUCCESS))
+                res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
             } else {
-                res.json(response(res, RESPONSE_CODE.OLD_PASSWORD_NOT_MATCH))
+                res.status(200).json(response(res, RESPONSE_CODE.OLD_PASSWORD_NOT_MATCH))
             }
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     }
 }

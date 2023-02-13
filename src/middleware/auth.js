@@ -10,7 +10,7 @@ const auth = async (req, res, next) => {
         const token = req.headers.authorization;
         const _user = jwt.decode(token, process.env.SECRET_KEY);
         if (!_user) {
-            return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
+            return res.status(200).json(response(res, RESPONSE_CODE.USER_EXPIRED))
         }
         const userdb = await User.findOne({
             where: {
@@ -32,10 +32,10 @@ const auth = async (req, res, next) => {
 
         const dateNow = moment().toDate().getTime();
         if (_user.exp * 1000 < dateNow) {
-            return res.json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
+            return res.status(200).json(response(res, RESPONSE_CODE.TOKEN_EXPIRED))
         }
         if (userdb.status === STATUS_USER.exprid || (!roleIds.includes(ROLE.admin) && userdb.dateExpired < moment().format("YYYY-MM-DD"))) {
-            return res.json(response(res, RESPONSE_CODE.USER_EXPIRED))
+            return res.status(200).json(response(res, RESPONSE_CODE.USER_EXPIRED))
         }
         const newToken = jwt.sign(userdb, process.env.SECRET_KEY, { expiresIn: "7d" });
         res.locals._user = userdb;
@@ -43,7 +43,7 @@ const auth = async (req, res, next) => {
         next()
     } catch (error) {
         console.log(error);
-        res.json(response(res, RESPONSE_CODE.AUTHORIZATION_FAILD))
+        res.status(200).json(response(res, RESPONSE_CODE.AUTHORIZATION_FAILD))
     }
 }
 

@@ -12,10 +12,10 @@ const RoleController = {
                 where: { id }
             }).then(r => r?.toJSON() || null)
             const records = !!role ? [role] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async search(req, res, next) {
@@ -39,10 +39,10 @@ const RoleController = {
             const records = result.rows;
             const count = result.count;
             const page_count = Math.ceil(count / limit);
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records, count, limit, page, page_count))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async create(req, res, next) {
@@ -53,10 +53,10 @@ const RoleController = {
             role.createdBy = role.createdBy || _user.id
             const vehicleTypedb = await Role.create(role).then(r => r?.toJSON() || null);
             const records = !!vehicleTypedb ? [vehicleTypedb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async update(req, res, next) {
@@ -79,10 +79,10 @@ const RoleController = {
                 }
             }).then(r => r?.toJSON() || null)
             const records = !!roledb ? [roledb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async updateMany(req, res, next) {
@@ -107,10 +107,10 @@ const RoleController = {
                 }
             }).then(r => r.map(r => r.toJSON()) || [])
             const records = !!roleIdsdb && roleIdsdb.length > 0 ? [roleIdsdb] : [];
-            res.json(response(res, RESPONSE_CODE.SUCCESS, records))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS, records))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
     async delete(req, res, next) {
@@ -124,10 +124,10 @@ const RoleController = {
                     }
                 }
             })
-            res.json(response(res, RESPONSE_CODE.SUCCESS))
+            res.status(200).json(response(res, RESPONSE_CODE.SUCCESS))
         } catch (error) {
             console.log(error);
-            res.json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
+            res.status(200).json(response(res, RESPONSE_CODE.ERROR_EXTERNAL))
         }
     },
 }
